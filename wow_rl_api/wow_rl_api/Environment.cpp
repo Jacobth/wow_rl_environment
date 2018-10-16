@@ -4,16 +4,16 @@
 #include <iterator>
 #include <limits>
 
-#define TERMINAL_STATE 961
-#define INIT_STATE 53
+#define TERMINAL_STATE 1158
+#define INIT_STATE 351
 
-#define START_X 415.0
-#define START_Y -8980.0
+#define START_X -2.0 //415.0
+#define START_Y  -8940.0 //-8980.0
 
 #define END_X -385.0
 #define END_Y -9480.0
 
-#define SQUARE_SIZE 10.0
+#define SQUARE_SIZE 5.0 //10.0
 
 #define UP_ACTION 0
 #define DOWN_ACTION 1
@@ -22,10 +22,10 @@
 
 #define INIT_X -115.0
 #define INIT_Y -8980.0 
-#define INIT_Z 85.0
+#define INIT_Z 84.5
 
-#define SIZE_X 80
-#define SIZE_Y 60
+#define SIZE_X 41 //80
+#define SIZE_Y 31 //60
 
 MemoryAction memory;
 
@@ -44,7 +44,14 @@ Environment::Environment()
 
 Environment::StepReturn Environment::Step(int action) {
 
+	std::cout << "new step" << std::endl;
+
+	int tmp_y = current_y;
+	int tmp_x = current_x;
+
 	Square current_square = grid[current_y][current_x];
+
+	float current_z = memory.GetZ() + 0.5;
 
 	current_state = current_square.state;
 
@@ -65,9 +72,20 @@ Environment::StepReturn Environment::Step(int action) {
 
 		Square new_square = grid[current_y][current_x];
 
-		stuck = memory.Move(action, new_square.pos_x, new_square.pos_y);
+		stuck = memory.MoveToPoint(new_square.pos_x, new_square.pos_y);
 
-		reward = stuck ? -10.0 : -1.0;
+		reward = -1.0;
+
+		if (stuck)
+		{
+			std::cout << "missed next state" << std::endl;
+			//current_y = tmp_y;
+			//current_x = tmp_x;
+
+			//memory.SetPos(current_square.pos_x, current_square.pos_y, current_z);
+			reward = -1000000.0;
+			done = true;
+		}
 	}
 
 	else {
@@ -86,7 +104,8 @@ int Environment::Reset() {
 	SetGridIndex(current_state);
 
 	memory.SetPos(INIT_X, INIT_Y, INIT_Z);
-	memory.SetAngle(0);
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 	return current_state;
 }
@@ -111,9 +130,9 @@ std::vector<std::vector<Environment::Square>> Environment::CreateGrid()
 			int right = j == SIZE_X - 1 ? -1 : state + 1;
 
 			int neighbours[] = { up, down, left, right };
-			std::vector<int> v(neighbours, neighbours + sizeof(neighbours) / sizeof(neighbours[0]));
+			std::vector<int> neighbours_v(neighbours, neighbours + sizeof(neighbours) / sizeof(neighbours[0]));
 
-			matrix[i][j] = Environment::Square(state, v, x, y);
+			matrix[i][j] = Environment::Square(state, neighbours_v, x, y);
 
 			x -= SQUARE_SIZE;
 

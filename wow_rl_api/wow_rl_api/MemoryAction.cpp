@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "MemoryAction.h"
+#include <ctime>
 
 #define _USE_MATH_DEFINES
 
-#define EPSILON 0.5
+#define EPSILON 0.2
 #define DELAY 100
 
 /*These are the offsets for the World of Warcraft client in version
@@ -59,8 +60,14 @@ enum Movements
 {
 	CtmABase = 0xCA11D8,
 	CtmAction = CtmABase + 0x1C,
+	FaceNorth = 0x2,
 	MoveForwardStart = 0x4,
-	MoveForwardStop = 0x3
+	MoveForwardStop = 0x3,
+	CtmX = CtmABase + 0x90,
+	CtmY = CtmABase + 0x8C,
+	CtmZ = CtmABase + 0x94,
+	CtmDistance = CtmABase + 0xC,
+	InitCtm = CtmABase + 0x7
 };
 
 const float PI = atan(1) * 4;
@@ -124,9 +131,49 @@ float MemoryAction::GetDistance(float x, float y) {
 	return distance;
 }
 
+void MemoryAction::StartMoving(float x, float y) {
+
+	const float distance = 0.2f;
+	const int init_value = 65;
+
+	mem.WriteInt((LPVOID)Movements::InitCtm, init_value);
+	mem.WriteFloat((LPVOID)(Movements::CtmX), x);
+	mem.WriteFloat((LPVOID)(Movements::CtmY), y);
+	mem.WriteInt((LPVOID)(Movements::CtmAction), Movements::MoveForwardStart);
+	mem.WriteFloat((LPVOID)(Movements::CtmDistance), distance);
+}
+
+bool MemoryAction::MoveToPoint(float x, float y) {
+
+	const double max_time = 5000;
+
+	StartMoving(x, y);
+
+	clock_t start = clock();
+
+	while (IsMoving()) {
+
+		double elapsed = (double)(clock() - start);
+
+		if (elapsed > max_time) {
+			Stop();
+			return false;
+		}
+	}
+
+	return GetDistance(x, y) > EPSILON;
+}
+
+bool MemoryAction::IsMoving() {
+
+	int action = mem.ReadInt((LPVOID)(Movements::CtmAction));
+
+	return action == Movements::MoveForwardStart;
+}
+
 bool MemoryAction::Move(int action, float x, float y) {
 
-	SetAngle(0);
+	MemoryAction::PointNorth();
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(DELAY));
 
@@ -158,13 +205,13 @@ bool MemoryAction::Move(int action, float x, float y) {
 	float current_distance = 0;
 	bool stuck = false;
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	int sleep = 40;
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
 
 	while ((current_distance = GetDistance(x, y)) > EPSILON) {
 
-		//	std::cout << "current_distance" << current_distance << std::endl;
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
 
 		// If this is true we missed the next step
 		if (current_distance >= prev_distance) {
@@ -180,9 +227,9 @@ bool MemoryAction::Move(int action, float x, float y) {
 
 	Stop();
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(DELAY));
+	std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
 
-	SetAngle(0);
+	PointNorth();
 
 	return stuck;
 }
@@ -202,8 +249,7 @@ void MemoryAction::MoveForward() {
 
 void MemoryAction::MoveBackwards() {
 
-	FLOAT angle = GetAngle();
-	FLOAT new_angle = angle - PI;
+	FLOAT new_angle = GetAngle() - PI;
 
 	SetAngle(new_angle);
 
@@ -212,8 +258,7 @@ void MemoryAction::MoveBackwards() {
 
 void MemoryAction::MoveLeft() {
 
-	FLOAT angle = GetAngle();
-	FLOAT new_angle = angle + (PI / 2);
+	FLOAT new_angle = GetAngle() + (PI / 2);
 
 	SetAngle(new_angle);
 
@@ -222,8 +267,7 @@ void MemoryAction::MoveLeft() {
 
 void MemoryAction::MoveRight() {
 
-	FLOAT angle = GetAngle();
-	FLOAT new_angle = angle - (PI / 2);
+	FLOAT new_angle = GetAngle() - (PI / 2);
 
 	SetAngle(new_angle);
 
@@ -232,8 +276,6 @@ void MemoryAction::MoveRight() {
 
 FLOAT MemoryAction::GetAngle()
 {
-	LoadFromMemory();
-
 	FLOAT angle = mem.ReadFloat((LPVOID)(playerBase + ObjectOffsets::Rot));
 	return angle;
 }
@@ -300,6 +342,25 @@ void MemoryAction::MoveToCorpse() {
 	FLOAT z = ReadCorpsePos(ObjectOffsets::Corpse_Pos_Z);
 
 	SetPos(x, y, z);
+}
+
+void MemoryAction::MoveCorpseToPlayer() {
+	FLOAT x = GetX();
+	FLOAT y = GetY();
+	FLOAT z = GetZ();
+
+	SetCorpsePos(ObjectOffsets::Corpse_Pos_X, x);
+	SetCorpsePos(ObjectOffsets::Corpse_Pos_Y, y);
+	SetCorpsePos(ObjectOffsets::Corpse_Pos_Z, z);
+}
+
+void MemoryAction::SetCorpsePos(DWORD offset, FLOAT pos)
+{
+	LoadFromMemory();
+
+	if (pos != NULL) {
+		mem.WriteFloat((LPVOID)(offset), pos);
+	}
 }
 
 void MemoryAction::SetSpeed(FLOAT speed)

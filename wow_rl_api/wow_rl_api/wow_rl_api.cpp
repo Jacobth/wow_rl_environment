@@ -7,40 +7,50 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+#include <random>
 
-
+void test(Environment env);
+void printState(Environment env, MemoryAction mem);
 
 int main()
 {
 	MemoryAction mem;
 	Environment env;
-		env.Reset();
-		env.Step(1);
-		env.Step(2);
-		env.Step(2);
-		env.Step(2);
-		env.Step(0);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		env.Step(3);
-		
+	//env.Reset();
+	//mem.MoveTest();
 
-//	while (true) {
-	/*
+	//std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+
+	//env.Reset();
+	test(env);
+	
+	//printState(env, mem);
+
+	return 0;
+}
+
+void test(Environment env) {
+
+	env.Reset();
+
+	for (int i = 0; i < 200; i++) {
+
+		std::random_device rd;     // only used once to initialise (seed) engine
+		std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
+		std::uniform_int_distribution<int> uni(0, 3);
+
+		int random_action = uni(rng);
+
+		Environment::StepReturn step = env.Step(random_action);
+
+		if (step.done)
+			env.Reset();
+	}
+}
+
+void printState(Environment env, MemoryAction mem) {
+	while (true) {
+
 		float x = mem.GetX();
 		float y = mem.GetY();
 		float z = mem.GetZ();
@@ -49,12 +59,7 @@ int main()
 		std::cout << "y:" << y << std::endl;
 		std::cout << "z:" << z << '\n' << std::endl;
 
-		std::cout << env.GetCloseState() << '\n' << std::endl	;
-		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	//}
-
-		while (true);
-		*/
-	return 0;
+		std::cout << env.GetCloseState() << '\n' << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	}
 }
-

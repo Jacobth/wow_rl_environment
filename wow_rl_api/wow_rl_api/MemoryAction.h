@@ -38,6 +38,15 @@ public:
 	void MoveBackwards();
 	void MoveLeft();
 	void MoveRight();
+	void PointNorth() {
+		SetAngle(0);
+	};
+	void StartMoving(float x, float y);
+	void MoveCorpseToPlayer();
+	void SetCorpsePos(DWORD offset, FLOAT pos);
+
+	bool MoveToPoint(float x, float y);
+	bool IsMoving();
 
 	DWORD GetHp();
 	FLOAT GetAngle();
