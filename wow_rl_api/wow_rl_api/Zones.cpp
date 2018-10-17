@@ -1,33 +1,11 @@
 #include "stdafx.h"
 #include "Zones.h"
 
-#define TERMINAL_STATE 1158
-#define INIT_STATE 351
-
-#define START_X -2.0 //415.0
-#define START_Y  -8940.0 //-8980.0
-
-#define END_X -385.0
-#define END_Y -9480.0
-
-#define SQUARE_SIZE 5.0 //10.0
-
-#define UP_ACTION 0
-#define DOWN_ACTION 1
-#define LEFT_ACTION 2
-#define RIGHT_ACTION 3
-
-#define INIT_X -115.0
-#define INIT_Y -8980.0 
-#define INIT_Z 84.5
-
-#define SIZE_X 41 //80
-#define SIZE_Y 31 //60
-
-
 Zones::Zones()
 {
-	zones.insert(std::make_pair("elwynn", new Grid(1158, 351, -2.0, -8940.0, 41, 31, GetPositionVector(-115.0, -8980.0, 84.5))));
+	// TERMINAL_STATE, INIT_STATE, START_X, START_Y, SIZE_X, SIZE_Y, Position vector with start x,y and z coordinates
+	zones.insert(std::make_pair("elwynn", new Grid(1158, 351, -2, -8940, 41, 31, GetPositionVector(-115, -8980, 84.5))));
+	zones.insert(std::make_pair("eversong", new Grid(7484, 1180, -5960, 10400, 100, 80, GetPositionVector(-6360, 10345, 34.5))));
 }
 
 std::vector<float> Zones::GetPositionVector(float x, float y, float z) {

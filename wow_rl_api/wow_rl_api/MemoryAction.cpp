@@ -4,7 +4,7 @@
 
 #define _USE_MATH_DEFINES
 
-#define EPSILON 0.4
+#define EPSILON 0.5
 #define DELAY 100
 
 /*These are the offsets for the World of Warcraft client in version
@@ -24,7 +24,8 @@ enum ObjectOffsets : DWORD
 	Corpse_Pos_X = 0xBD0A5C,
 	Corpse_Pos_Y = 0xBD0A58,
 	Corpse_Pos_Z = 0xBD0A60,
-	Movement = 0x81C
+	Movement = 0x81C,
+	Tick_Count = 0xB499A4
 };
 
 enum UnitOffsets : DWORD
@@ -53,7 +54,8 @@ enum NameOffsets : DWORDLONG
 	nameStore = 0x00C5D938 + 0x8,
 	nameMask = 0x24,
 	nameBase = 0x1C,
-	nameString = 0x20
+	nameString = 0x20,
+	playerMask = 0x10,
 };
 
 enum Movements
@@ -62,12 +64,16 @@ enum Movements
 	CtmAction = CtmABase + 0x1C,
 	FaceNorth = 0x2,
 	MoveForwardStart = 0x4,
-	MoveForwardStop = 0x3,
+	MoveForwardStop = 13,
 	CtmX = CtmABase + 0x90,
 	CtmY = CtmABase + 0x8C,
 	CtmZ = CtmABase + 0x94,
 	CtmDistance = CtmABase + 0xC,
-	InitCtm = CtmABase + 0x7
+	InitCtm_1 = CtmABase + 0x5,
+	InitCtm_2 = CtmABase + 0x6,
+	InitCtm_3 = CtmABase + 0x7,
+	TurnCtm = CtmABase + 0x4,
+	InitFloat = CtmABase + 0x8
 };
 
 const float PI = atan(1) * 4;
@@ -131,23 +137,34 @@ float MemoryAction::GetDistance(float x, float y) {
 	return distance;
 }
 
-void MemoryAction::StartMoving(float x, float y) {
+void MemoryAction::StartMoving(float x, float y, float z) {
 
+	const float init_float = 0.25;
 	const float distance = 0.2f;
-	const int init_value = 65;
+	const byte init_value_1 = 102;
+	const byte init_value_2 = 95;
+	const byte init_value_3 = 65;
+	const byte turn_scale = 243;
 
-	mem.WriteInt((LPVOID)Movements::InitCtm, init_value);
+	mem.WriteFloat((LPVOID)Movements::InitFloat, init_float);
+	mem.WriteByte((LPVOID)Movements::InitCtm_1, init_value_1);
+	mem.WriteByte((LPVOID)Movements::InitCtm_2, init_value_2);
+	mem.WriteByte((LPVOID)Movements::InitCtm_3, init_value_3);
+	mem.WriteByte((LPVOID)Movements::TurnCtm, turn_scale);
+	
 	mem.WriteFloat((LPVOID)(Movements::CtmX), x);
 	mem.WriteFloat((LPVOID)(Movements::CtmY), y);
+	mem.WriteFloat((LPVOID)(Movements::CtmZ), z);
+
 	mem.WriteInt((LPVOID)(Movements::CtmAction), Movements::MoveForwardStart);
 	mem.WriteFloat((LPVOID)(Movements::CtmDistance), distance);
 }
 
-bool MemoryAction::MoveToPoint(float x, float y) {
+bool MemoryAction::MoveToPoint(float x, float y, float z) {
 
 	const double max_time = 6000;
 
-	StartMoving(x, y);
+	StartMoving(x, y, z);
 
 	clock_t start = clock();
 
@@ -375,4 +392,34 @@ FLOAT MemoryAction::GetSpeed()
 	FLOAT speed = mem.ReadFloat((LPVOID)(playerBase + ObjectOffsets::Movement));
 
 	return speed;
+}
+
+void MemoryAction::TurnOffAFK() {
+	mem.WriteInt((LPVOID)ObjectOffsets::Tick_Count, 200000000000000);
+}
+
+void MemoryAction::Chat(std::string message)
+{
+	long long lpguid = ((long long(__cdecl*)())(0x004D3790))();
+	if (!(lpguid && ((int(__cdecl*)(long long, int))0x004D4DB0)(lpguid, NameOffsets::playerMask)))
+		return;
+
+	time_t rawtime;
+	struct tm timeinfo;
+	char buffer[80];
+
+	time(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
+
+	strftime(buffer, 80, "[%H:%M:%S] ", &timeinfo);
+
+	std::string taggedMessage = buffer + message;
+	std::replace(taggedMessage.begin(), taggedMessage.end(), '\'', '_');
+	std::string to_print = "print ('" + taggedMessage + "')";
+	FramescriptExecute(to_print.c_str());
+}
+
+void MemoryAction::FramescriptExecute(const char* text)
+{
+	((void(__cdecl*)(const char*, const char*, void*))0x00819210)(text, "CppBot", nullptr);
 }

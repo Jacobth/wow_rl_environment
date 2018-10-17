@@ -1,17 +1,10 @@
 #include "stdafx.h"
 #include "Environment.h"
 
-MemoryAction memory;
-
-int current_state;
-
 Environment::Environment(std::string zone)
 {
 	Zones zones;
-
 	grid = zones.GetGrid(zone);
-
-	current_state = (*grid).init_state;
 }
 
 Environment::StepReturn Environment::Step(int action) {
@@ -20,12 +13,9 @@ Environment::StepReturn Environment::Step(int action) {
 
 	Grid::Square current_square = grid->GetSquare();
 
-	current_state = current_square.state;
-
 	int next_state = current_square.neighbours[action];
 	float reward = 0.0;
 	bool done = false;
-
 	bool stuck = false;
 
 	if (next_state == grid->terminal_state) {
@@ -38,7 +28,7 @@ Environment::StepReturn Environment::Step(int action) {
 		grid->UpdateGridIndex(action);
 		Grid::Square new_square = grid->GetSquare();
 
-		stuck = memory.MoveToPoint(new_square.pos_x, new_square.pos_y);
+		stuck = memory.MoveToPoint(new_square.pos_x, new_square.pos_y, grid->init_states[2]);
 
 		reward = -1.0;
 
@@ -53,16 +43,14 @@ Environment::StepReturn Environment::Step(int action) {
 		}
 	}
 
-	else {
-		next_state = current_state;
-	}
-
-	current_state = next_state;
-
 	return Environment::StepReturn(next_state, reward, done);
 }
 
 int Environment::Reset() {
+
+	memory.Stop();
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
 	float x = grid->init_states[0];
 	float y = grid->init_states[1];
@@ -72,10 +60,11 @@ int Environment::Reset() {
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
-	current_state = grid->init_state;
-	grid->SetGridIndex(current_state);
+	int init = grid->init_state;
 
-	return current_state;
+	grid->SetGridIndex(init);
+
+	return init;
 }
 
 int Environment::GetCloseState() {

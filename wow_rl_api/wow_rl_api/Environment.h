@@ -29,6 +29,7 @@ public:
 	};
 
 	Grid* grid;
+	MemoryAction memory;
 
 	Environment(std::string zone);
 	

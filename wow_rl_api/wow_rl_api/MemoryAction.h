@@ -5,6 +5,9 @@
 #include <math.h>
 #include <chrono>
 #include <thread>
+#include <string>
+#include <time.h>
+#include <algorithm>
 
 class MemoryAction
 {
@@ -41,11 +44,14 @@ public:
 	void PointNorth() {
 		SetAngle(0);
 	};
-	void StartMoving(float x, float y);
+	void StartMoving(float x, float y, float z);
 	void MoveCorpseToPlayer();
 	void SetCorpsePos(DWORD offset, FLOAT pos);
+	void TurnOffAFK();
 
-	bool MoveToPoint(float x, float y);
+	void Chat(std::string message);
+
+	bool MoveToPoint(float x, float y, float z);
 	bool IsMoving();
 
 	DWORD GetHp();
@@ -58,7 +64,7 @@ public:
 	FLOAT ReadCorpsePos(DWORD offset);
 
 private:
-
+	void FramescriptExecute(const char* text);
 
 };
 

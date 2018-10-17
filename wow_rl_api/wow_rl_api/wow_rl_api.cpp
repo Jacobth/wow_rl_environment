@@ -15,11 +15,13 @@ void printState(Environment env, MemoryAction mem);
 int main()
 {
 	MemoryAction mem;
-	Environment env("elwynn");
+	Environment env("eversong");
 	//env.Reset();
 	//mem.MoveTest();
 
 	//std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+
+	//mem.Chat("h");
 
 	//env.Reset();
 	test(env);
@@ -39,12 +41,14 @@ void test(Environment env) {
 		std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
 		std::uniform_int_distribution<int> uni(0, 3);
 
-		int random_action = uni(rng);
+		int action = uni(rng);
 
-		Environment::StepReturn step = env.Step(2);
+		Environment::StepReturn step = env.Step(action);
 
-		if (step.done)
+		if (step.done) {
 			env.Reset();
+			std::cout << "reseted" << std::endl;
+		}
 	}
 }
 
@@ -60,6 +64,6 @@ void printState(Environment env, MemoryAction mem) {
 		std::cout << "z:" << z << '\n' << std::endl;
 
 		std::cout << env.GetCloseState() << '\n' << std::endl;
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
