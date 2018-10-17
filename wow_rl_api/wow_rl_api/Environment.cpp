@@ -1,57 +1,24 @@
 #include "stdafx.h"
 #include "Environment.h"
-#include <algorithm>
-#include <iterator>
-#include <limits>
-
-#define TERMINAL_STATE 1158
-#define INIT_STATE 351
-
-#define START_X -2.0 //415.0
-#define START_Y  -8940.0 //-8980.0
-
-#define END_X -385.0
-#define END_Y -9480.0
-
-#define SQUARE_SIZE 5.0 //10.0
-
-#define UP_ACTION 0
-#define DOWN_ACTION 1
-#define LEFT_ACTION 2
-#define RIGHT_ACTION 3
-
-#define INIT_X -115.0
-#define INIT_Y -8980.0 
-#define INIT_Z 84.5
-
-#define SIZE_X 41 //80
-#define SIZE_Y 31 //60
 
 MemoryAction memory;
 
 int current_state;
-int current_y;
-int current_x;
 
-std::vector<std::vector<Environment::Square>> grid;
-
-Environment::Environment()
+Environment::Environment(std::string zone)
 {
-	grid = CreateGrid();
-	current_state = INIT_STATE;
-	//SetGridIndex(current_state);
+	Zones zones;
+
+	grid = zones.GetGrid(zone);
+
+	current_state = (*grid).init_state;
 }
 
 Environment::StepReturn Environment::Step(int action) {
 
 	std::cout << "new step" << std::endl;
 
-	int tmp_y = current_y;
-	int tmp_x = current_x;
-
-	Square current_square = grid[current_y][current_x];
-
-	float current_z = memory.GetZ() + 0.5;
+	Grid::Square current_square = grid->GetSquare();
 
 	current_state = current_square.state;
 
@@ -61,16 +28,15 @@ Environment::StepReturn Environment::Step(int action) {
 
 	bool stuck = false;
 
-	if (next_state == TERMINAL_STATE) {
+	if (next_state == grid->terminal_state) {
 		done = true;
 		reward = 10.0;
 	}
 
 	else if (next_state != -1) {
 
-		UpdateGridIndex(action);
-
-		Square new_square = grid[current_y][current_x];
+		grid->UpdateGridIndex(action);
+		Grid::Square new_square = grid->GetSquare();
 
 		stuck = memory.MoveToPoint(new_square.pos_x, new_square.pos_y);
 
@@ -79,11 +45,10 @@ Environment::StepReturn Environment::Step(int action) {
 		if (stuck)
 		{
 			std::cout << "missed next state" << std::endl;
-			//current_y = tmp_y;
-			//current_x = tmp_x;
 
-			//memory.SetPos(current_square.pos_x, current_square.pos_y, current_z);
 			reward = -1000000.0;
+			memory.Stop();
+
 			done = true;
 		}
 	}
@@ -92,7 +57,6 @@ Environment::StepReturn Environment::Step(int action) {
 		next_state = current_state;
 	}
 
-	//next_state, reward, done
 	current_state = next_state;
 
 	return Environment::StepReturn(next_state, reward, done);
@@ -100,94 +64,18 @@ Environment::StepReturn Environment::Step(int action) {
 
 int Environment::Reset() {
 
-	current_state = INIT_STATE;
-	SetGridIndex(current_state);
+	float x = grid->init_states[0];
+	float y = grid->init_states[1];
+	float z = grid->init_states[2];
 
-	memory.SetPos(INIT_X, INIT_Y, INIT_Z);
+	memory.SetPos(x, y, z);
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+	current_state = grid->init_state;
+	grid->SetGridIndex(current_state);
 
 	return current_state;
-}
-
-std::vector<std::vector<Environment::Square>> Environment::CreateGrid()
-{
-	std::vector<std::vector<Environment::Square>> matrix(SIZE_Y, std::vector<Environment::Square>(SIZE_X));
-
-	int state = 0;
-	float x = START_X;
-	float y = START_Y;
-
-	for (int i = 0; i < SIZE_Y; i++) {
-
-		x = START_X;
-
-		for (int j = 0; j < SIZE_X; j++) {
-
-			int up = i == 0 ? -1 : state - SIZE_X;
-			int down = i == SIZE_X - 1 ? -1 : state + SIZE_X;
-			int left = j == 0 ? -1 : state - 1;
-			int right = j == SIZE_X - 1 ? -1 : state + 1;
-
-			int neighbours[] = { up, down, left, right };
-			std::vector<int> neighbours_v(neighbours, neighbours + sizeof(neighbours) / sizeof(neighbours[0]));
-
-			matrix[i][j] = Environment::Square(state, neighbours_v, x, y);
-
-			x -= SQUARE_SIZE;
-
-			if (state == INIT_STATE) {
-				current_y = i;
-				current_x = j;
-			}
-
-			state++;
-		}
-		y -= SQUARE_SIZE;
-	}
-
-	return matrix;
-}
-
-void Environment::SetGridIndex(int state) {
-
-	for (int i = 0; i < SIZE_Y; i++) {
-		for (int j = 0; j < SIZE_X; j++) {
-
-			int tmp_state = grid[i][j].state;
-
-			if (state == tmp_state) {
-				current_y = i;
-				current_x = j;
-				return;
-			}
-		}
-	}
-}
-
-void Environment::UpdateGridIndex(int action) {
-
-	switch (action)
-	{
-	case UP_ACTION:
-		current_y--;
-		break;
-
-	case DOWN_ACTION:
-		current_y++;
-		break;
-
-	case LEFT_ACTION:
-		current_x--;
-		break;
-
-	case RIGHT_ACTION:
-		current_x++;
-		break;
-
-	default:
-		break;
-	}
 }
 
 int Environment::GetCloseState() {
@@ -200,13 +88,13 @@ int Environment::GetCloseState() {
 	float x = 0;
 	float y = 0;
 
-	for (int i = 0; i < SIZE_Y; i++) {
+	for (int i = 0; i < grid->size_y; i++) {
 
 		//std::cout << "New y:" << i << '\n' << std::endl;
 
-		for (int j = 0; j < SIZE_X; j++) {
+		for (int j = 0; j < grid->size_x; j++) {
 
-			Square square = grid[i][j];
+			Grid::Square square = grid->GetSquare(i, j);
 
 			float dist = mem.GetDistance(square.pos_x, square.pos_y);
 

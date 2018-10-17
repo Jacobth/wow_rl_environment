@@ -15,7 +15,7 @@ void printState(Environment env, MemoryAction mem);
 int main()
 {
 	MemoryAction mem;
-	Environment env;
+	Environment env("elwynn");
 	//env.Reset();
 	//mem.MoveTest();
 
@@ -23,7 +23,7 @@ int main()
 
 	//env.Reset();
 	test(env);
-	
+
 	//printState(env, mem);
 
 	return 0;
@@ -41,7 +41,7 @@ void test(Environment env) {
 
 		int random_action = uni(rng);
 
-		Environment::StepReturn step = env.Step(random_action);
+		Environment::StepReturn step = env.Step(2);
 
 		if (step.done)
 			env.Reset();

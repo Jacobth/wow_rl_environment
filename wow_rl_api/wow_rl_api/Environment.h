@@ -1,6 +1,12 @@
 #pragma once
 #include <vector>
 #include "MemoryAction.h"
+#include "Grid.h"
+#include <algorithm>
+#include <iterator>
+#include <limits>
+#include "Zones.h"
+#include <string>
 
 class Environment
 {
@@ -22,38 +28,13 @@ public:
 
 	};
 
-	class Square {
-	public:
+	Grid* grid;
 
-		int state;
-		std::vector<int> neighbours;
-		float pos_x;
-		float pos_y;
-
-		Square() {
-
-		}
-
-		Square(int _state, std::vector<int> _neighbours, float _pos_x, float _pos_y)
-		{
-			state = _state;
-			neighbours = _neighbours;
-			pos_x = _pos_x;
-			pos_y = _pos_y;
-		}
-
-	};
-
-public:
-	Environment();
-
+	Environment(std::string zone);
+	
 	StepReturn Step(int action);
-	int Reset();	
+	int Reset();
 	int GetCloseState();
-
-private:
-	void SetGridIndex(int state);
-	std::vector<std::vector<Environment::Square>> CreateGrid();
-	void UpdateGridIndex(int action);
+	
 };
 

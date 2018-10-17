@@ -4,7 +4,7 @@
 
 #define _USE_MATH_DEFINES
 
-#define EPSILON 0.2
+#define EPSILON 0.4
 #define DELAY 100
 
 /*These are the offsets for the World of Warcraft client in version
@@ -145,7 +145,7 @@ void MemoryAction::StartMoving(float x, float y) {
 
 bool MemoryAction::MoveToPoint(float x, float y) {
 
-	const double max_time = 5000;
+	const double max_time = 6000;
 
 	StartMoving(x, y);
 
@@ -160,6 +160,8 @@ bool MemoryAction::MoveToPoint(float x, float y) {
 			return false;
 		}
 	}
+
+	std::cout << GetDistance(x, y) << std::endl;
 
 	return GetDistance(x, y) > EPSILON;
 }
