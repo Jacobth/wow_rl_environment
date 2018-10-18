@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Grid.h"
 
-Grid::Grid(int terminal_state, int init_state, float start_x, float start_y, int size_x, int size_y, std::vector<float> init_states)
+Grid::Grid(std::vector<int> terminal_state, int init_state, float start_x, float start_y, int size_x, int size_y, std::vector<float> init_states)
 {
 	this->terminal_state = terminal_state;
 	this->init_state = init_state;

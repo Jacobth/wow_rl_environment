@@ -14,7 +14,7 @@ public:
 private:
 
 	std::vector<float> GetPositionVector(float x, float y, float z);
-
+	std::vector<int> GetStateVector(int states[]);
 	std::map<std::string, Grid*> zones;
 };
 

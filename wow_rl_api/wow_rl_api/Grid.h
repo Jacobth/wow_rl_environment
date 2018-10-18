@@ -34,7 +34,7 @@ public:
 
 	const float square_size = 5.0;
 
-	int terminal_state;
+	std::vector<int> terminal_state;
 	int init_state;
 
 	float start_x;
@@ -45,7 +45,7 @@ public:
 
 	std::vector<float> init_states;
 
-	Grid(int terminal_state, int init_state, float start_x, float start_y, int size_x, int size_y, std::vector<float> init_states);
+	Grid(std::vector<int> terminal_state, int init_state, float start_x, float start_y, int size_x, int size_y, std::vector<float> init_states);
 
 	std::vector<std::vector<Grid::Square>> CreateGrid();
 

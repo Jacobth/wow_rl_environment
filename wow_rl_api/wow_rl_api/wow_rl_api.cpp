@@ -15,14 +15,15 @@ void printState(Environment env, MemoryAction mem);
 int main()
 {
 	MemoryAction mem;
-	Environment env("eversong");
+	Environment env("elwynn");
 	//env.Reset();
 	//mem.MoveTest();
 
 	//std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-
+	
 	//mem.Chat("h");
-
+	//mem.checkTime();
+	//mem.Lua_DoString("RepopMe();");
 	//env.Reset();
 	test(env);
 
@@ -43,7 +44,7 @@ void test(Environment env) {
 
 		int action = uni(rng);
 
-		Environment::StepReturn step = env.Step(action);
+		Environment::StepReturn step = env.Step(2);
 
 		if (step.done) {
 			env.Reset();

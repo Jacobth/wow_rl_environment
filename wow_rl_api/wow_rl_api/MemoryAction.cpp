@@ -151,7 +151,7 @@ void MemoryAction::StartMoving(float x, float y, float z) {
 	mem.WriteByte((LPVOID)Movements::InitCtm_2, init_value_2);
 	mem.WriteByte((LPVOID)Movements::InitCtm_3, init_value_3);
 	mem.WriteByte((LPVOID)Movements::TurnCtm, turn_scale);
-	
+
 	mem.WriteFloat((LPVOID)(Movements::CtmX), x);
 	mem.WriteFloat((LPVOID)(Movements::CtmY), y);
 	mem.WriteFloat((LPVOID)(Movements::CtmZ), z);
@@ -174,7 +174,7 @@ bool MemoryAction::MoveToPoint(float x, float y, float z) {
 
 		if (elapsed > max_time) {
 			Stop();
-			return false;
+			return true;
 		}
 	}
 
@@ -259,7 +259,8 @@ void MemoryAction::SetAngle(FLOAT angle)
 }
 
 void MemoryAction::Stop() {
-	mem.WriteInt((LPVOID)(Movements::CtmAction), Movements::MoveForwardStop);
+	if (IsMoving())
+		mem.WriteInt((LPVOID)(Movements::CtmAction), Movements::MoveForwardStop);
 }
 
 void MemoryAction::MoveForward() {
@@ -398,28 +399,78 @@ void MemoryAction::TurnOffAFK() {
 	mem.WriteInt((LPVOID)ObjectOffsets::Tick_Count, 200000000000000);
 }
 
-void MemoryAction::Chat(std::string message)
-{
-	long long lpguid = ((long long(__cdecl*)())(0x004D3790))();
-	if (!(lpguid && ((int(__cdecl*)(long long, int))0x004D4DB0)(lpguid, NameOffsets::playerMask)))
-		return;
+bool MemoryAction::IsDead() {
 
-	time_t rawtime;
-	struct tm timeinfo;
-	char buffer[80];
+	float dead_x = -119;
+	float dead_y = -8921;
 
-	time(&rawtime);
-	localtime_s(&timeinfo, &rawtime);
-
-	strftime(buffer, 80, "[%H:%M:%S] ", &timeinfo);
-
-	std::string taggedMessage = buffer + message;
-	std::replace(taggedMessage.begin(), taggedMessage.end(), '\'', '_');
-	std::string to_print = "print ('" + taggedMessage + "')";
-	FramescriptExecute(to_print.c_str());
+	return GetDistance(dead_x, dead_y) < 5;
 }
 
-void MemoryAction::FramescriptExecute(const char* text)
+typedef struct {
+	DWORD funcptr;
+	char command[255];
+} INJDATA;
+
+__declspec(naked) DWORD codeasm() {
+	__asm {
+		nop
+		push ebx //here we have address of funcptr, but I want the address of command on EAX so...
+		pop eax // remove from stack and pass it to EAX
+		add eax, 4 // add 4 to the address, therefore, now we have the address of char command[255]
+		push 0
+		push eax
+		push eax
+		mov edx, [ebx] //grab the content of EBX which is funcptr and pass to EDX
+		call edx // call Lua_doString()
+		add esp, 0xC //probably just "fixing" the stack pointer
+		nop
+		ret
+	};
+	//return 0;
+}
+
+static void after_codeasm(void) {
+}
+
+void convertToASCII(std::string letter, char x[255])
 {
-	((void(__cdecl*)(const char*, const char*, void*))0x00819210)(text, "CppBot", nullptr);
+	for (int j = 0; j <= 255; j++) {
+		x[j] = 0x0;
+	}
+	for (int i = 0; i < letter.size(); i++)
+	{
+		x[i] = letter.at(i);
+	}
+}
+
+void MemoryAction::Lua_DoString(std::string cmd) {
+
+	HINSTANCE mod = LoadLibrary(L"user32.dll");
+
+	DWORD Framescript_ExecuteBuffer = 0x00819210;
+	DWORD func = reinterpret_cast<unsigned int>(mod) + Framescript_ExecuteBuffer;
+
+	DWORD cbCodeSize = ((PBYTE)after_codeasm - (PBYTE)codeasm);
+
+	cbCodeSize = 200;
+
+	INJDATA mydata;
+	convertToASCII(cmd, mydata.command);
+	mydata.funcptr = func;
+
+	LPVOID pData = VirtualAllocEx(mem.handle, NULL, sizeof(func), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	LPVOID pLibRemote = VirtualAllocEx(mem.handle, NULL, cbCodeSize, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+
+	WriteProcessMemory(mem.handle, pData, &mydata, sizeof(mydata), NULL);
+	WriteProcessMemory(mem.handle, pLibRemote, &codeasm, cbCodeSize, NULL);
+
+	HANDLE hThread = CreateRemoteThread(mem.handle, NULL, 0, (LPTHREAD_START_ROUTINE)pLibRemote, pData, 0, NULL);
+
+	if (hThread != 0) {
+		WaitForSingleObject(hThread, INFINITE);
+		CloseHandle(hThread);
+		VirtualFreeEx(mem.handle, pLibRemote, cbCodeSize, MEM_RELEASE);
+		VirtualFreeEx(mem.handle, pData, sizeof(func), MEM_RELEASE);
+	}
 }

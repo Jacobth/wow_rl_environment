@@ -7,20 +7,31 @@ Environment::Environment(std::string zone)
 	grid = zones.GetGrid(zone);
 }
 
+float Environment::GetRemainingHp(int hp) {
+
+	return ((float)memory.GetHp() / hp);
+}
+
 Environment::StepReturn Environment::Step(int action) {
 
 	std::cout << "new step" << std::endl;
 
 	Grid::Square current_square = grid->GetSquare();
 
+	int current_state = current_square.state;
 	int next_state = current_square.neighbours[action];
 	float reward = 0.0;
 	bool done = false;
 	bool stuck = false;
 
-	if (next_state == grid->terminal_state) {
+	int init_hp = memory.GetHp();
+
+	std::vector<int> terminal_states = grid->terminal_state;
+
+	if (std::find(terminal_states.begin(), terminal_states.end(), next_state) != terminal_states.end()) {
 		done = true;
-		reward = 10.0;
+		reward = 100000;
+		std::cout << "terminal state" << std::endl;
 	}
 
 	else if (next_state != -1) {
@@ -36,14 +47,25 @@ Environment::StepReturn Environment::Step(int action) {
 		{
 			std::cout << "missed next state" << std::endl;
 
-			reward = -1000000.0;
+			reward = -1000000;
 			memory.Stop();
 
 			done = true;
 		}
 	}
 
-	return Environment::StepReturn(next_state, reward, done);
+	//We reached the end of the grid
+	else {
+		reward = -100;
+		next_state = current_state;
+	}
+
+	float remaining_hp = memory.IsDead() ? 0 : GetRemainingHp(init_hp);
+	reward += (1 - remaining_hp) * -10000;
+
+	std::vector<float> next_state_vector = { float(next_state), remaining_hp };
+
+	return Environment::StepReturn(next_state_vector, reward, done);
 }
 
 int Environment::Reset() {

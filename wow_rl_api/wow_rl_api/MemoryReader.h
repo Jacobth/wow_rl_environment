@@ -19,10 +19,12 @@ public:
 	BYTE WriteByte(LPVOID pointer, BYTE value);
 	BYTE ReadByte(LPVOID pointer);
 
-private:
 	HWND hwnd;
 	DWORD procID;
 	HANDLE handle;
+
+private:
+	
 
 	void InitReader();
 };

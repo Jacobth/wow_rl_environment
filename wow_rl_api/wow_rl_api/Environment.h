@@ -15,15 +15,15 @@ public:
 	class StepReturn {
 	public:
 
-		int next_state;
+		std::vector<float> next_state;
 		double reward;
 		bool done;
 
-		StepReturn(int _next_state, double _reward, bool _done)
+		StepReturn(std::vector<float> next_state, double reward, bool done)
 		{
-			next_state = _next_state;
-			reward = _reward;
-			done = _done;
+			this->next_state = next_state;
+			this->reward = reward;
+			this->done = done;
 		}
 
 	};
@@ -32,10 +32,13 @@ public:
 	MemoryAction memory;
 
 	Environment(std::string zone);
-	
+
 	StepReturn Step(int action);
 	int Reset();
 	int GetCloseState();
-	
+
+
+private:
+	float GetRemainingHp(int hp);
 };
 

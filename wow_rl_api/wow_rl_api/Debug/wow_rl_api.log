@@ -1,9 +1,3 @@
 ﻿  wow_rl_api.cpp
-  MemoryAction.cpp
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(79): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(79): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(398): warning C4305: 'argument': truncation from '__int64' to 'INT'
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(398): warning C4309: 'argument': truncation of constant value
-  Generating Code...
-  wow_rl_api.vcxproj -> C:\Users\conta\Documents\Visual Studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.exe
-  wow_rl_api.vcxproj -> C:\Users\conta\Documents\Visual Studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.pdb (Partial PDB)
+  wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.exe
+  wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.pdb (Partial PDB)

@@ -8,6 +8,7 @@
 #include <string>
 #include <time.h>
 #include <algorithm>
+#include <vector>
 
 class MemoryAction
 {
@@ -49,8 +50,6 @@ public:
 	void SetCorpsePos(DWORD offset, FLOAT pos);
 	void TurnOffAFK();
 
-	void Chat(std::string message);
-
 	bool MoveToPoint(float x, float y, float z);
 	bool IsMoving();
 
@@ -63,8 +62,13 @@ public:
 	FLOAT GetSpeed();
 	FLOAT ReadCorpsePos(DWORD offset);
 
+	bool IsDead();
+
+	void chat(std::string message);
+	void Lua_DoString(std::string cmd);
+
 private:
-	void FramescriptExecute(const char* text);
+	
 
 };
 
