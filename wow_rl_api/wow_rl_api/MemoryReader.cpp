@@ -1,14 +1,17 @@
 #include "stdafx.h"
 #include "MemoryReader.h"
+#include <iostream>
+
+#define PROG_STRING "World of warcraft"
 
 MemoryReader::MemoryReader() {
 	InitReader();
 }
 
 void MemoryReader::InitReader() {
-	hwnd = FindWindowA(NULL, "World of warcraft");
+	hwnd = FindWindowA(NULL, PROG_STRING);
 
-	if (hwnd == NULL) {
+	if (hwnd == 0) {
 
 		std::cout << "Couldn't find the process" << std::endl;
 		Sleep(3000);
@@ -19,7 +22,7 @@ void MemoryReader::InitReader() {
 		GetWindowThreadProcessId(hwnd, &procID);
 		handle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, procID);
 
-		if (procID == NULL) {
+		if (procID == 0) {
 			std::cout << "Couldn't find the process id" << std::endl;
 			Sleep(3000);
 			exit(-1);
@@ -27,70 +30,70 @@ void MemoryReader::InitReader() {
 	}
 }
 
-DWORD MemoryReader::ReadInt(LPVOID pointer) {
+int MemoryReader::ReadInt(intptr_t pointer) {
 
-	LPVOID value = 0;
-	ReadProcessMemory(handle, pointer, &value, sizeof(value), 0);
+	intptr_t value = 0;
+	ReadProcessMemory(handle, (void *)pointer, &value, sizeof(value), 0);
 
-	return (INT)value;
+	return (intptr_t)value;
 }
 
-INT MemoryReader::WriteInt(LPVOID pointer, INT value) {
+int MemoryReader::WriteInt(intptr_t pointer, int value) {
 
-	WriteProcessMemory(handle, pointer, &value, sizeof(value), 0);
+	WriteProcessMemory(handle, (void *)pointer, &value, sizeof(value), 0);
 
 	return value;
 }
 
-DWORD MemoryReader::ReadUInt32(LPVOID pointer) {
+int MemoryReader::ReadUInt32(intptr_t pointer) {
 
-	LPVOID value = 0;
-	ReadProcessMemory(handle, pointer, &value, sizeof(value), 0);
+	intptr_t value = 0;
+	ReadProcessMemory(handle, (void *)pointer, &value, sizeof(value), 0);
 
-	return (DWORD)value;
+	return (intptr_t)value;
 }
 
-DWORDLONG MemoryReader::ReadUInt64(LPVOID pointer) {
+long MemoryReader::ReadUInt64(intptr_t pointer) {
 
-	LPVOID value = 0;
-	ReadProcessMemory(handle, pointer, &value, sizeof(value), 0);
+	intptr_t value = 0;
+	ReadProcessMemory(handle, (void *)pointer, &value, sizeof(value), 0);
 
 	return (DWORDLONG)value;
 }
 
-FLOAT MemoryReader::ReadFloat(LPVOID pointer) {
+float MemoryReader::ReadFloat(intptr_t pointer) {
 
-	FLOAT value;
-	ReadProcessMemory(handle, pointer, &value, sizeof(value), 0);
-
-	return value;
-}
-
-FLOAT MemoryReader::WriteFloat(LPVOID pointer, FLOAT value) {
-
-	WriteProcessMemory(handle, pointer, &value, sizeof(value), 0);
+	float value;
+	ReadProcessMemory(handle, (void *)pointer, &value, sizeof(value), 0);
 
 	return value;
 }
 
-DWORD MemoryReader::WriteUInt32(LPVOID pointer, DWORD value) {
+float MemoryReader::WriteFloat(intptr_t pointer, float value) {
 
-	WriteProcessMemory(handle, pointer, &value, sizeof(value), 0);
-
-	return value;
-}
-
-BYTE MemoryReader::WriteByte(LPVOID pointer, BYTE value) {
-
-	WriteProcessMemory(handle, pointer, &value, sizeof(value), 0);
+	WriteProcessMemory(handle, (void *)pointer, &value, sizeof(value), 0);
 
 	return value;
 }
 
-BYTE MemoryReader::ReadByte(LPVOID pointer) {
+int MemoryReader::WriteUInt32(intptr_t pointer, int value) {
 
-	BYTE value;
-	ReadProcessMemory(handle, pointer, &value, sizeof(value), 0);
+	WriteProcessMemory(handle, (void *)pointer, &value, sizeof(value), 0);
+
+	return value;
+}
+
+byte MemoryReader::WriteByte(intptr_t pointer, byte value) {
+
+	WriteProcessMemory(handle, (void *)pointer, &value, sizeof(value), 0);
+
+	return value;
+}
+
+byte MemoryReader::ReadByte(intptr_t pointer) {
+
+	byte value;
+	ReadProcessMemory(handle, (void *)pointer, &value, sizeof(value), 0);
 
 	return value;
 }

@@ -1,0 +1,1 @@
+g++ -c Environment.cpp && g++ -c Zones.cpp && g++ -c MemoryReader.cpp && g++ -c MemoryAction.cpp && g++ -c Grid.cpp && g++ -shared -Wl,-soname,libenv.so -o libenv.so  Grid.o Environment.o MemoryAction.o MemoryReader.o Zones.o && copy libenv.so C:\Users\conta\Documents\GitHub\wow_rl_network

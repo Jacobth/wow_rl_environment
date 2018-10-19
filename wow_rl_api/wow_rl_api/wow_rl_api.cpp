@@ -21,6 +21,8 @@ int main()
 
 	//std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 	
+	std::cout << mem.GetHp() << std::endl;
+	//env.Reset();
 	//mem.Chat("h");
 	//mem.checkTime();
 	//mem.Lua_DoString("RepopMe();");
@@ -34,7 +36,9 @@ int main()
 
 void test(Environment env) {
 
-	env.Reset();
+	int y = env.Reset();
+
+	std::cout << y << std::endl;
 
 	for (int i = 0; i < 200; i++) {
 
@@ -43,12 +47,19 @@ void test(Environment env) {
 		std::uniform_int_distribution<int> uni(0, 3);
 
 		int action = uni(rng);
+		float* arr = env.Step(0);
 
-		Environment::StepReturn step = env.Step(2);
+		//float arr2[4];
 
-		if (step.done) {
-			env.Reset();
-			std::cout << "reseted" << std::endl;
+		//memcpy(arr, arr2, sizeof(arr));
+
+		//Environment::StepReturn step = 
+
+		//std::cout << (float)(*(arr + 2)) << std::endl;
+
+		if (*(arr + 3) == 1) {
+			int x = env.Reset();
+			std::cout << x << std::endl;
 		}
 	}
 }

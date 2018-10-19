@@ -1,47 +1,38 @@
 #pragma once
-#include<iostream>
-#include<Windows.h>
 #include "MemoryReader.h"
-#include <math.h>
-#include <chrono>
-#include <thread>
-#include <string>
-#include <time.h>
-#include <algorithm>
-#include <vector>
 
 class MemoryAction
 {
 public:
 	MemoryAction();
 
-	DWORD clientConnection;
-	DWORD objectManager;
-	DWORD firstObject;
-	DWORD playerBase;
+	int clientConnection;
+	int objectManager;
+	int firstObject;
+	int playerBase;
 
-	DWORDLONG playerGuid;
-	DWORDLONG targetGuid;
+	long playerGuid;
+	long targetGuid;
 
 	MemoryReader mem;
 
 	float GetDistance(float x, float y);
 
 	void LoadFromMemory();
-	void SetAngle(FLOAT angle);
+	void SetAngle(float angle);
 	//bool Move(int action, float x, float y);
 	void SetPos(float x, float y, float z);
-	void SetX(FLOAT x);
-	void SetY(FLOAT y);
-	void SetZ(FLOAT z);
-	void SetHp(DWORD hp);
-	void SetSpeed(FLOAT speed);
+	void SetX(float x);
+	void SetY(float y);
+	void SetZ(float z);
+	void SetHp(int hp);
+	void SetSpeed(float speed);
 	void MoveToCorpse();
 	void Stop();
 	void MoveForward();
-	void MoveBackwards();
-	void MoveLeft();
-	void MoveRight();
+//	void MoveBackwards();
+//	void MoveLeft();
+//	void MoveRight();
 	void PointNorth() {
 		SetAngle(0);
 	};
@@ -51,14 +42,14 @@ public:
 	bool MoveToPoint(float x, float y, float z);
 	bool IsMoving();
 
-	DWORD GetHp();
-	FLOAT GetAngle();
-	FLOAT GetX();
-	FLOAT GetY();
-	FLOAT GetZ();
-	DWORD GetObjectBaseByGuid(DWORD firstObject, DWORDLONG guid);
-	FLOAT GetSpeed();
-	FLOAT ReadCorpsePos(DWORD offset);
+	int GetHp();
+	float GetAngle();
+	float GetX();
+	float GetY();
+	float GetZ();
+	int GetObjectBaseByGuid(int firstObject, long guid);
+	float GetSpeed();
+	float ReadCorpsePos(int offset);
 
 	bool IsDead();
 

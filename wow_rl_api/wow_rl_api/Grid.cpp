@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "Grid.h"
 
+#define UP_ACTION 0
+#define DOWN_ACTION 1
+#define LEFT_ACTION 2
+#define RIGHT_ACTION 3
+
 Grid::Grid(std::vector<int> terminal_state, int init_state, float start_x, float start_y, int size_x, int size_y, std::vector<float> init_states)
 {
 	this->terminal_state = terminal_state;

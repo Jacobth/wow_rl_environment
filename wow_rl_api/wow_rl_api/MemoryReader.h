@@ -1,5 +1,4 @@
 #pragma once
-#include<iostream>
 #include<Windows.h>
 
 class MemoryReader
@@ -9,23 +8,21 @@ public:
 
 	MemoryReader();
 
-	DWORD ReadUInt32(LPVOID pointer);
-	DWORDLONG ReadUInt64(LPVOID pointer);
-	FLOAT ReadFloat(LPVOID pointer);
-	DWORD ReadInt(LPVOID pointer);
-	FLOAT WriteFloat(LPVOID pointer, FLOAT value);
-	DWORD WriteUInt32(LPVOID pointer, DWORD value);
-	INT WriteInt(LPVOID pointer, INT value);
-	BYTE WriteByte(LPVOID pointer, BYTE value);
-	BYTE ReadByte(LPVOID pointer);
+	int ReadUInt32(intptr_t pointer);
+	long ReadUInt64(intptr_t pointer);
+	float ReadFloat(intptr_t pointer);
+	int ReadInt(intptr_t pointer);
+	float WriteFloat(intptr_t pointer, float value);
+	int WriteUInt32(intptr_t pointer, int value);
+	int WriteInt(intptr_t pointer, int value);
+	byte WriteByte(intptr_t pointer, byte value);
+	byte ReadByte(intptr_t pointer);
 
 	HWND hwnd;
 	DWORD procID;
 	HANDLE handle;
 
 private:
-	
-
 	void InitReader();
 };
 

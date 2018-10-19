@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "MemoryAction.h"
-#include <ctime>
+#include <iostream>
+#include <thread>
+#include <math.h>
+#include <string>
+#include <vector>
 
 #define _USE_MATH_DEFINES
 
@@ -12,7 +16,7 @@
 *These offsets are always the same when the program launch.
 */
 
-enum ObjectOffsets : DWORD
+enum ObjectOffsets : int
 {
 	Type = 0x14,
 	Pos_X = 0x79C,
@@ -28,7 +32,7 @@ enum ObjectOffsets : DWORD
 	Tick_Count = 0xB499A4
 };
 
-enum UnitOffsets : DWORD
+enum UnitOffsets : int
 {
 	Level = 0x36 * 4,
 	Health = 0x18 * 4,
@@ -38,7 +42,7 @@ enum UnitOffsets : DWORD
 	MaxEnergy = 0x21 * 4
 };
 
-enum ClientOffsets : DWORD
+enum ClientOffsets : int
 {
 	StaticClientConnection = 0x00C79CE0,
 	ObjectManagerOffset = 0x2ED0,
@@ -49,7 +53,7 @@ enum ClientOffsets : DWORD
 	LocalTargetGUID = 0x00BD07B0
 };
 
-enum NameOffsets : DWORDLONG
+enum NameOffsets : long
 {
 	nameStore = 0x00C5D938 + 0x8,
 	nameMask = 0x24,
@@ -82,20 +86,20 @@ MemoryAction::MemoryAction() {
 	LoadFromMemory();
 }
 
-DWORD MemoryAction::GetObjectBaseByGuid(DWORD firstObject, DWORDLONG guid)
+int MemoryAction::GetObjectBaseByGuid(int firstObject, long guid)
 {
-	DWORD baseTmp = firstObject;
-	DWORDLONG tmpGuid;
+	int baseTmp = firstObject;
+	long tmpGuid;
 
 	while (baseTmp != 0)
 	{
-		tmpGuid = mem.ReadUInt64((LPVOID)(baseTmp + ObjectOffsets::Guid));
+		tmpGuid = mem.ReadUInt64((intptr_t)(baseTmp + ObjectOffsets::Guid));
 
 		if (tmpGuid == guid) {
 			return baseTmp;
 		}
 
-		baseTmp = mem.ReadUInt32((LPVOID)(baseTmp + ClientOffsets::NextObjectOffset));
+		baseTmp = mem.ReadUInt32((intptr_t)(baseTmp + ClientOffsets::NextObjectOffset));
 	}
 
 	return 0;
@@ -103,20 +107,20 @@ DWORD MemoryAction::GetObjectBaseByGuid(DWORD firstObject, DWORDLONG guid)
 
 void MemoryAction::LoadFromMemory()
 {
-	clientConnection = mem.ReadUInt32((LPVOID)ClientOffsets::StaticClientConnection);
-	objectManager = mem.ReadUInt32((LPVOID)(clientConnection + ClientOffsets::ObjectManagerOffset));
-	firstObject = mem.ReadUInt32((LPVOID)(objectManager + ClientOffsets::FirstObjectOffset));
-	targetGuid = mem.ReadUInt64((LPVOID)(ClientOffsets::LocalTargetGUID));
-	playerGuid = mem.ReadUInt64((LPVOID)(objectManager + ClientOffsets::LocalGuidOffset));
+	clientConnection = mem.ReadUInt32((intptr_t)ClientOffsets::StaticClientConnection);
+	objectManager = mem.ReadUInt32((intptr_t)(clientConnection + ClientOffsets::ObjectManagerOffset));
+	firstObject = mem.ReadUInt32((intptr_t)(objectManager + ClientOffsets::FirstObjectOffset));
+	targetGuid = mem.ReadUInt64((intptr_t)(ClientOffsets::LocalTargetGUID));
+	playerGuid = mem.ReadUInt64((intptr_t)(objectManager + ClientOffsets::LocalGuidOffset));
 
 	playerBase = GetObjectBaseByGuid(firstObject, playerGuid);
 }
 
 void MemoryAction::SetPos(float x, float y, float z)
 {
-	mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Pos_X), x);
-	mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Pos_Y), y);
-	mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Pos_Z), z);
+	mem.WriteFloat((intptr_t)(playerBase + ObjectOffsets::Pos_X), x);
+	mem.WriteFloat((intptr_t)(playerBase + ObjectOffsets::Pos_Y), y);
+	mem.WriteFloat((intptr_t)(playerBase + ObjectOffsets::Pos_Z), z);
 }
 
 float MemoryAction::GetDistance(float x, float y) {
@@ -138,18 +142,18 @@ void MemoryAction::StartMoving(float x, float y, float z) {
 	const byte init_value_3 = 65;
 	const byte turn_scale = 243;
 
-	mem.WriteFloat((LPVOID)Movements::InitFloat, init_float);
-	mem.WriteByte((LPVOID)Movements::InitCtm_1, init_value_1);
-	mem.WriteByte((LPVOID)Movements::InitCtm_2, init_value_2);
-	mem.WriteByte((LPVOID)Movements::InitCtm_3, init_value_3);
-	mem.WriteByte((LPVOID)Movements::TurnCtm, turn_scale);
+	mem.WriteFloat((intptr_t)Movements::InitFloat, init_float);
+	mem.WriteByte((intptr_t)Movements::InitCtm_1, init_value_1);
+	mem.WriteByte((intptr_t)Movements::InitCtm_2, init_value_2);
+	mem.WriteByte((intptr_t)Movements::InitCtm_3, init_value_3);
+	mem.WriteByte((intptr_t)Movements::TurnCtm, turn_scale);
 
-	mem.WriteFloat((LPVOID)(Movements::CtmX), x);
-	mem.WriteFloat((LPVOID)(Movements::CtmY), y);
-	mem.WriteFloat((LPVOID)(Movements::CtmZ), z);
+	mem.WriteFloat((intptr_t)(Movements::CtmX), x);
+	mem.WriteFloat((intptr_t)(Movements::CtmY), y);
+	mem.WriteFloat((intptr_t)(Movements::CtmZ), z);
 
-	mem.WriteInt((LPVOID)(Movements::CtmAction), Movements::MoveForwardStart);
-	mem.WriteFloat((LPVOID)(Movements::CtmDistance), distance);
+	mem.WriteInt((intptr_t)(Movements::CtmAction), Movements::MoveForwardStart);
+	mem.WriteFloat((intptr_t)(Movements::CtmDistance), distance);
 }
 
 bool MemoryAction::MoveToPoint(float x, float y, float z) {
@@ -177,25 +181,25 @@ bool MemoryAction::MoveToPoint(float x, float y, float z) {
 
 bool MemoryAction::IsMoving() {
 
-	int action = mem.ReadInt((LPVOID)(Movements::CtmAction));
+	int action = mem.ReadInt((intptr_t)(Movements::CtmAction));
 
 	return action == Movements::MoveForwardStart;
 }
 
-void MemoryAction::SetAngle(FLOAT angle)
+void MemoryAction::SetAngle(float angle)
 {
-	mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Rot), angle);
+	mem.WriteFloat((intptr_t)(playerBase + ObjectOffsets::Rot), angle);
 }
 
 void MemoryAction::Stop() {
 	if (IsMoving())
-		mem.WriteInt((LPVOID)(Movements::CtmAction), Movements::MoveForwardStop);
+		mem.WriteInt((intptr_t)(Movements::CtmAction), Movements::MoveForwardStop);
 }
 
 void MemoryAction::MoveForward() {
-	mem.WriteInt((LPVOID)(Movements::CtmAction), Movements::MoveForwardStart);
+	mem.WriteInt((intptr_t)(Movements::CtmAction), Movements::MoveForwardStart);
 }
-
+/*
 void MemoryAction::MoveBackwards() {
 
 	FLOAT new_angle = GetAngle() - PI;
@@ -222,85 +226,85 @@ void MemoryAction::MoveRight() {
 
 	MoveForward();
 }
-
-FLOAT MemoryAction::GetAngle()
+*/
+float MemoryAction::GetAngle()
 {
-	FLOAT angle = mem.ReadFloat((LPVOID)(playerBase + ObjectOffsets::Rot));
+	float angle = mem.ReadFloat((intptr_t)(playerBase + ObjectOffsets::Rot));
 	return angle;
 }
 
-FLOAT MemoryAction::GetX()
+float MemoryAction::GetX()
 {
-	FLOAT x = mem.ReadFloat((LPVOID)(playerBase + ObjectOffsets::Pos_X));
+	float x = mem.ReadFloat((intptr_t)(playerBase + ObjectOffsets::Pos_X));
 	return x;
 }
 
-FLOAT MemoryAction::GetY()
+float MemoryAction::GetY()
 {
-	FLOAT y = mem.ReadFloat((LPVOID)(playerBase + ObjectOffsets::Pos_Y));
+	float y = mem.ReadFloat((intptr_t)(playerBase + ObjectOffsets::Pos_Y));
 
 	return y;
 }
 
-FLOAT MemoryAction::GetZ()
+float MemoryAction::GetZ()
 {
-	FLOAT z = mem.ReadFloat((LPVOID)(playerBase + ObjectOffsets::Pos_Z));
+	float z = mem.ReadFloat((intptr_t)(playerBase + ObjectOffsets::Pos_Z));
 
 	return z;
 }
 
-void MemoryAction::SetX(FLOAT x)
+void MemoryAction::SetX(float x)
 {
 	SetPos(x, GetY(), GetZ());
 }
 
-void MemoryAction::SetY(FLOAT y)
+void MemoryAction::SetY(float y)
 {
 	SetPos(GetX(), y, GetZ());
 }
 
-void MemoryAction::SetZ(FLOAT z)
+void MemoryAction::SetZ(float z)
 {
 	SetPos(GetX(), GetY(), z);
 }
 
-DWORD MemoryAction::GetHp()
+int MemoryAction::GetHp()
 {
-	DWORD unitFieldsAddress = mem.ReadUInt32((LPVOID)(playerBase + ObjectOffsets::UnitFields));
-	DWORD hp = mem.ReadUInt32((LPVOID)(unitFieldsAddress + UnitOffsets::Health));
+	int unitFieldsAddress = mem.ReadUInt32((intptr_t)(playerBase + ObjectOffsets::UnitFields));
+	int hp = mem.ReadUInt32((intptr_t)(unitFieldsAddress + UnitOffsets::Health));
 
 	return hp;
 }
 
-void MemoryAction::SetHp(DWORD hp)
+void MemoryAction::SetHp(int hp)
 {
-	DWORD unitFieldsAddress = mem.ReadUInt32((LPVOID)(playerBase + ObjectOffsets::UnitFields));
-	mem.WriteUInt32((LPVOID)(unitFieldsAddress + UnitOffsets::Health), hp);
+	DWORD unitFieldsAddress = mem.ReadUInt32((intptr_t)(playerBase + ObjectOffsets::UnitFields));
+	mem.WriteUInt32((intptr_t)(unitFieldsAddress + UnitOffsets::Health), hp);
 }
 
-FLOAT MemoryAction::ReadCorpsePos(DWORD offset)
+float MemoryAction::ReadCorpsePos(int offset)
 {
-	FLOAT pos = mem.ReadFloat((LPVOID)(offset));
+	float pos = mem.ReadFloat((intptr_t)(offset));
 	return pos;
 }
 
 void MemoryAction::MoveToCorpse() {
 
-	FLOAT x = ReadCorpsePos(ObjectOffsets::Corpse_Pos_X);
-	FLOAT y = ReadCorpsePos(ObjectOffsets::Corpse_Pos_Y);
-	FLOAT z = ReadCorpsePos(ObjectOffsets::Corpse_Pos_Z);
+	float x = ReadCorpsePos(ObjectOffsets::Corpse_Pos_X);
+	float y = ReadCorpsePos(ObjectOffsets::Corpse_Pos_Y);
+	float z = ReadCorpsePos(ObjectOffsets::Corpse_Pos_Z);
 
 	SetPos(x, y, z);
 }
 
-void MemoryAction::SetSpeed(FLOAT speed)
+void MemoryAction::SetSpeed(float speed)
 {
-	mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Movement), speed);
+	mem.WriteFloat((intptr_t)(playerBase + ObjectOffsets::Movement), speed);
 }
 
-FLOAT MemoryAction::GetSpeed()
+float MemoryAction::GetSpeed()
 {
-	FLOAT speed = mem.ReadFloat((LPVOID)(playerBase + ObjectOffsets::Movement));
+	float speed = mem.ReadFloat((intptr_t)(playerBase + ObjectOffsets::Movement));
 
 	return speed;
 }
@@ -309,7 +313,7 @@ void MemoryAction::TurnOffAFK() {
 
 	int time = 20000000;
 
-	mem.WriteInt((LPVOID)ObjectOffsets::Tick_Count, time);
+	mem.WriteInt((intptr_t)ObjectOffsets::Tick_Count, time);
 }
 
 bool MemoryAction::IsDead() {

@@ -7,6 +7,7 @@ Zones::Zones()
 	//zones.insert(std::make_pair("elwynn", new Grid(1158, 351, -2, -8940, 41, 31, GetPositionVector(-115, -8980, 84.5))));
 
 	std::vector<int> terminal_states = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 81, 82, 289, 355 };
+	std::vector<int> init_states = { 70, -9430, 57 };
 
 	zones.insert(std::make_pair("elwynn", new Grid(terminal_states, 3930, 400, -9150, 69, 71, GetPositionVector(70, -9430, 57))));
 	//zones.insert(std::make_pair("eversong", new Grid(7484, 1180, -5960, 10400, 100, 80, GetPositionVector(-6360, 10345, 34.5))));

@@ -1,3 +1,6 @@
-﻿  wow_rl_api.cpp
-  wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.exe
-  wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.pdb (Partial PDB)
+﻿  MemoryAction.cpp
+c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(79): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(79): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(112): warning C4244: 'argument': conversion from 'DWORDLONG' to 'long', possible loss of data
+  wow_rl_api.vcxproj -> C:\Users\conta\Documents\Visual Studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.exe
+  wow_rl_api.vcxproj -> C:\Users\conta\Documents\Visual Studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.pdb (Partial PDB)

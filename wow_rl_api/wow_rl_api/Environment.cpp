@@ -1,7 +1,16 @@
 #include "stdafx.h"
 #include "Environment.h"
+#include "Zones.h"
+#include "MemoryAction.h"
+#include "Grid.h"
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <limits>
+#include <iostream>
 
-
+Grid* grid;
+MemoryAction memory;
 
 Environment::Environment(std::string zone)
 {
@@ -92,11 +101,9 @@ int Environment::Reset() {
 
 	//std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
-	int init = grid->init_state;
+	int init = grid->GetInitState();
 
 	grid->SetGridIndex(init);
-
-	for (int i = 0; i < 50000; i++);
 
 	return init;
 }

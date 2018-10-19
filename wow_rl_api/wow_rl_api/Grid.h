@@ -1,11 +1,6 @@
 #pragma once
 #include <vector>
 
-#define UP_ACTION 0
-#define DOWN_ACTION 1
-#define LEFT_ACTION 2
-#define RIGHT_ACTION 3
-
 class Grid
 {
 public:
@@ -32,8 +27,6 @@ public:
 
 	};
 
-	const float square_size = 5.0;
-
 	std::vector<int> terminal_state;
 	int init_state;
 
@@ -49,12 +42,20 @@ public:
 
 	std::vector<std::vector<Grid::Square>> CreateGrid();
 
+	int GetInitState() {
+		return init_state;
+	}
+
 	void SetGridIndex(int state);
 	void UpdateGridIndex(int action);
 
 	Grid::Square GetSquare();
 	Grid::Square GetSquare(int i, int j);
 
+private:
+
 	std::vector<std::vector<Grid::Square>> matrix;
+
+	const float square_size = 5.0;
 };
 
