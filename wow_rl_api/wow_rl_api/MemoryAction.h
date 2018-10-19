@@ -29,8 +29,8 @@ public:
 
 	void LoadFromMemory();
 	void SetAngle(FLOAT angle);
-	bool Move(int action, float x, float y);
-	void SetPos(FLOAT x, FLOAT y, FLOAT z);
+	//bool Move(int action, float x, float y);
+	void SetPos(float x, float y, float z);
 	void SetX(FLOAT x);
 	void SetY(FLOAT y);
 	void SetZ(FLOAT z);
@@ -46,8 +46,6 @@ public:
 		SetAngle(0);
 	};
 	void StartMoving(float x, float y, float z);
-	void MoveCorpseToPlayer();
-	void SetCorpsePos(DWORD offset, FLOAT pos);
 	void TurnOffAFK();
 
 	bool MoveToPoint(float x, float y, float z);
@@ -64,11 +62,11 @@ public:
 
 	bool IsDead();
 
-	void chat(std::string message);
-	void Lua_DoString(std::string cmd);
+	//void chat(std::string message);
+	//void Lua_DoString(std::string cmd);
 
 private:
-	
+
 
 };
 

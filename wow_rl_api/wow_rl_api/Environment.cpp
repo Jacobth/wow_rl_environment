@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Environment.h"
 
+
+
 Environment::Environment(std::string zone)
 {
 	Zones zones;
@@ -12,9 +14,9 @@ float Environment::GetRemainingHp(int hp) {
 	return ((float)memory.GetHp() / hp);
 }
 
-Environment::StepReturn Environment::Step(int action) {
+float* Environment::Step(int action) {
 
-	std::cout << "new step" << std::endl;
+	//std::cout << "new step" << std::endl;
 
 	Grid::Square current_square = grid->GetSquare();
 
@@ -31,7 +33,7 @@ Environment::StepReturn Environment::Step(int action) {
 	if (std::find(terminal_states.begin(), terminal_states.end(), next_state) != terminal_states.end()) {
 		done = true;
 		reward = 100000;
-		std::cout << "terminal state" << std::endl;
+		//std::cout << "terminal state" << std::endl;
 	}
 
 	else if (next_state != -1) {
@@ -45,8 +47,7 @@ Environment::StepReturn Environment::Step(int action) {
 
 		if (stuck)
 		{
-			std::cout << "missed next state" << std::endl;
-
+			//std::cout << "missed next state" << std::endl;
 			reward = -1000000;
 			memory.Stop();
 
@@ -63,16 +64,25 @@ Environment::StepReturn Environment::Step(int action) {
 	float remaining_hp = memory.IsDead() ? 0 : GetRemainingHp(init_hp);
 	reward += (1 - remaining_hp) * -10000;
 
-	std::vector<float> next_state_vector = { float(next_state), remaining_hp };
+	float done_val = done ? 1.0 : 0.0;
 
-	return Environment::StepReturn(next_state_vector, reward, done);
+	float* vals = new float[4];
+
+	vals[0] = (float)next_state;
+	vals[1] = remaining_hp;
+	vals[2] = reward;
+	vals[3] = done_val;
+
+	delete vals;
+
+	return vals;
 }
 
 int Environment::Reset() {
 
 	memory.Stop();
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(300));
+	//std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
 	float x = grid->init_states[0];
 	float y = grid->init_states[1];
@@ -80,11 +90,13 @@ int Environment::Reset() {
 
 	memory.SetPos(x, y, z);
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(300));
+	//std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
 	int init = grid->init_state;
 
 	grid->SetGridIndex(init);
+
+	for (int i = 0; i < 50000; i++);
 
 	return init;
 }
@@ -123,4 +135,14 @@ int Environment::GetCloseState() {
 	std::cout << "y:" << y << std::endl;
 
 	return min_state;
+}
+
+extern "C" {
+
+	Environment* Env_new() { return new Environment("elwynn"); }
+
+	int Reset(Environment* env) { return env->Reset(); }
+	float* Step(Environment* env, int action) { return env->Step(action); }
+
+	//const char* GetS(Foo* foo) { return foo->getS(); }
 }

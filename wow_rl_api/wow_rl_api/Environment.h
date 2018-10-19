@@ -12,33 +12,17 @@ class Environment
 {
 
 public:
-	class StepReturn {
-	public:
-
-		std::vector<float> next_state;
-		double reward;
-		bool done;
-
-		StepReturn(std::vector<float> next_state, double reward, bool done)
-		{
-			this->next_state = next_state;
-			this->reward = reward;
-			this->done = done;
-		}
-
-	};
-
-	Grid* grid;
-	MemoryAction memory;
-
 	Environment(std::string zone);
 
-	StepReturn Step(int action);
+	float* Step(int action);
 	int Reset();
 	int GetCloseState();
 
 
 private:
+	Grid* grid;
+	MemoryAction memory;
+
 	float GetRemainingHp(int hp);
 };
 

@@ -112,19 +112,11 @@ void MemoryAction::LoadFromMemory()
 	playerBase = GetObjectBaseByGuid(firstObject, playerGuid);
 }
 
-void MemoryAction::SetPos(FLOAT x, FLOAT y, FLOAT z)
+void MemoryAction::SetPos(float x, float y, float z)
 {
-	if (x != NULL) {
-		mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Pos_X), x);
-	}
-
-	if (y != NULL) {
-		mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Pos_Y), y);
-	}
-
-	if (z != NULL) {
-		mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Pos_Z), z);
-	}
+	mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Pos_X), x);
+	mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Pos_Y), y);
+	mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Pos_Z), z);
 }
 
 float MemoryAction::GetDistance(float x, float y) {
@@ -178,7 +170,7 @@ bool MemoryAction::MoveToPoint(float x, float y, float z) {
 		}
 	}
 
-	std::cout << GetDistance(x, y) << std::endl;
+	//std::cout << GetDistance(x, y) << std::endl;
 
 	return GetDistance(x, y) > EPSILON;
 }
@@ -188,69 +180,6 @@ bool MemoryAction::IsMoving() {
 	int action = mem.ReadInt((LPVOID)(Movements::CtmAction));
 
 	return action == Movements::MoveForwardStart;
-}
-
-bool MemoryAction::Move(int action, float x, float y) {
-
-	MemoryAction::PointNorth();
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(DELAY));
-
-	switch (action)
-	{
-	case 0:
-		MoveForward();
-		break;
-
-	case 1:
-		MoveBackwards();
-		break;
-
-	case 2:
-		MoveLeft();
-		break;
-
-	case 3:
-		MoveRight();
-		break;
-
-	default:
-		break;
-	}
-
-	float inf = std::numeric_limits<float>::infinity();
-
-	float prev_distance = inf;
-	float current_distance = 0;
-	bool stuck = false;
-
-	int sleep = 40;
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-
-	while ((current_distance = GetDistance(x, y)) > EPSILON) {
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-
-		// If this is true we missed the next step
-		if (current_distance >= prev_distance) {
-
-			std::cout << "missed next state" << std::endl;
-			stuck = true;
-
-			break;
-		}
-
-		prev_distance = current_distance;
-	}
-
-	Stop();
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-
-	PointNorth();
-
-	return stuck;
 }
 
 void MemoryAction::SetAngle(FLOAT angle)
@@ -364,25 +293,6 @@ void MemoryAction::MoveToCorpse() {
 	SetPos(x, y, z);
 }
 
-void MemoryAction::MoveCorpseToPlayer() {
-	FLOAT x = GetX();
-	FLOAT y = GetY();
-	FLOAT z = GetZ();
-
-	SetCorpsePos(ObjectOffsets::Corpse_Pos_X, x);
-	SetCorpsePos(ObjectOffsets::Corpse_Pos_Y, y);
-	SetCorpsePos(ObjectOffsets::Corpse_Pos_Z, z);
-}
-
-void MemoryAction::SetCorpsePos(DWORD offset, FLOAT pos)
-{
-	LoadFromMemory();
-
-	if (pos != NULL) {
-		mem.WriteFloat((LPVOID)(offset), pos);
-	}
-}
-
 void MemoryAction::SetSpeed(FLOAT speed)
 {
 	mem.WriteFloat((LPVOID)(playerBase + ObjectOffsets::Movement), speed);
@@ -396,7 +306,10 @@ FLOAT MemoryAction::GetSpeed()
 }
 
 void MemoryAction::TurnOffAFK() {
-	mem.WriteInt((LPVOID)ObjectOffsets::Tick_Count, 200000000000000);
+
+	int time = 20000000;
+
+	mem.WriteInt((LPVOID)ObjectOffsets::Tick_Count, time);
 }
 
 bool MemoryAction::IsDead() {
@@ -406,7 +319,7 @@ bool MemoryAction::IsDead() {
 
 	return GetDistance(dead_x, dead_y) < 5;
 }
-
+/*
 typedef struct {
 	DWORD funcptr;
 	char command[255];
@@ -474,3 +387,69 @@ void MemoryAction::Lua_DoString(std::string cmd) {
 		VirtualFreeEx(mem.handle, pData, sizeof(func), MEM_RELEASE);
 	}
 }
+*/
+
+/*
+bool MemoryAction::Move(int action, float x, float y) {
+
+MemoryAction::PointNorth();
+
+std::this_thread::sleep_for(std::chrono::milliseconds(DELAY));
+
+switch (action)
+{
+case 0:
+MoveForward();
+break;
+
+case 1:
+MoveBackwards();
+break;
+
+case 2:
+MoveLeft();
+break;
+
+case 3:
+MoveRight();
+break;
+
+default:
+break;
+}
+
+float inf = std::numeric_limits<float>::infinity();
+
+float prev_distance = inf;
+float current_distance = 0;
+bool stuck = false;
+
+int sleep = 40;
+
+std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+
+while ((current_distance = GetDistance(x, y)) > EPSILON) {
+
+std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+
+// If this is true we missed the next step
+if (current_distance >= prev_distance) {
+
+std::cout << "missed next state" << std::endl;
+stuck = true;
+
+break;
+}
+
+prev_distance = current_distance;
+}
+
+Stop();
+
+std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+
+PointNorth();
+
+return stuck;
+}
+*/
