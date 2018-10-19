@@ -268,6 +268,14 @@ void MemoryAction::SetZ(float z)
 	SetPos(GetX(), GetY(), z);
 }
 
+int MemoryAction::GetMaxHp()
+{
+	int unitFieldsAddress = mem.ReadUInt32((intptr_t)(playerBase + ObjectOffsets::UnitFields));
+	int hp = mem.ReadUInt32((intptr_t)(unitFieldsAddress + UnitOffsets::MaxHealth));
+
+	return hp;
+}
+
 int MemoryAction::GetHp()
 {
 	int unitFieldsAddress = mem.ReadUInt32((intptr_t)(playerBase + ObjectOffsets::UnitFields));

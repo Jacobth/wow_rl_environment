@@ -43,6 +43,7 @@ public:
 	bool IsMoving();
 
 	int GetHp();
+	int GetMaxHp();
 	float GetAngle();
 	float GetX();
 	float GetY();

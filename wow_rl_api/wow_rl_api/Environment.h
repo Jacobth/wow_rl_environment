@@ -13,6 +13,6 @@ public:
 
 private:
 
-	float GetRemainingHp(int hp);
+	float GetRemainingHp(float hp);
 };
 

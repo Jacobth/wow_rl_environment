@@ -18,7 +18,7 @@ Environment::Environment(std::string zone)
 	grid = zones.GetGrid(zone);
 }
 
-float Environment::GetRemainingHp(int hp) {
+float Environment::GetRemainingHp(float hp) {
 
 	return ((float)memory.GetHp() / hp);
 }
@@ -35,8 +35,6 @@ float* Environment::Step(int action) {
 	bool done = false;
 	bool stuck = false;
 
-	int init_hp = memory.GetHp();
-
 	std::vector<int> terminal_states = grid->terminal_state;
 
 	if (std::find(terminal_states.begin(), terminal_states.end(), next_state) != terminal_states.end()) {
@@ -50,7 +48,7 @@ float* Environment::Step(int action) {
 		grid->UpdateGridIndex(action);
 		Grid::Square new_square = grid->GetSquare();
 
-		stuck = memory.MoveToPoint(new_square.pos_x, new_square.pos_y, grid->init_states[2]);
+		stuck = memory.MoveToPoint(new_square.pos_x, new_square.pos_y, memory.GetZ());
 
 		reward = -1.0;
 
@@ -70,8 +68,8 @@ float* Environment::Step(int action) {
 		next_state = current_state;
 	}
 
-	float remaining_hp = memory.IsDead() ? 0 : GetRemainingHp(init_hp);
-	reward += (1 - remaining_hp) * -10000;
+	float remaining_hp = memory.IsDead() ? 0 : GetRemainingHp(memory.GetMaxHp());
+	reward += ((1 - remaining_hp) * -10000);
 
 	float done_val = done ? 1.0 : 0.0;
 
