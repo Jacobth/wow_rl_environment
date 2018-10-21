@@ -1,6 +1,3 @@
-// wow_rl_api.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include "MemoryAction.h"
 #include "Environment.h"
@@ -8,9 +5,11 @@
 #include <chrono>
 #include <thread>
 #include <random>
+#include <iostream>
 
 void test(Environment env);
 void printState(Environment env, MemoryAction mem);
+void testPos(Environment env, MemoryAction mem);
 
 int main()
 {
@@ -20,14 +19,15 @@ int main()
 	//mem.MoveTest();
 
 	//std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-	
-	std::cout << mem.GetHp() << std::endl;
+
+	//std::cout << mem.GetHp() << std::endl;
 	//env.Reset();
 	//mem.Chat("h");
 	//mem.checkTime();
-	//mem.Lua_DoString("RepopMe();");
+	testPos(env, mem);
+
 	//env.Reset();
-	test(env);
+	//test(env);
 
 	//printState(env, mem);
 
@@ -78,4 +78,12 @@ void printState(Environment env, MemoryAction mem) {
 		std::cout << env.GetCloseState() << '\n' << std::endl;
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
+}
+
+void testPos(Environment env, MemoryAction mem) {
+
+	mem.Stop();
+	Sleep(300);
+	mem.SetPos(70, -9430, 56.6);
+	//mem.SetPos(7, -9430, 57);
 }

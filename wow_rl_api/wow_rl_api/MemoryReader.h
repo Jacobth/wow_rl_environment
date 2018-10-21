@@ -18,9 +18,12 @@ public:
 	byte WriteByte(intptr_t pointer, byte value);
 	byte ReadByte(intptr_t pointer);
 
+	//DWORD dwGetModuleBaseAddress(DWORD dwProcessIdentifier, TCHAR *lpszModuleName);
+
 	HWND hwnd;
 	DWORD procID;
 	HANDLE handle;
+	DWORD hThread;
 
 private:
 	void InitReader();

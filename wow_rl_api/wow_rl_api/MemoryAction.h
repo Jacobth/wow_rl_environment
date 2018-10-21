@@ -1,5 +1,6 @@
 #pragma once
 #include "MemoryReader.h"
+#include <string>
 
 class MemoryAction
 {
@@ -51,11 +52,8 @@ public:
 	int GetObjectBaseByGuid(int firstObject, long guid);
 	float GetSpeed();
 	float ReadCorpsePos(int offset);
-
 	bool IsDead();
-
-	//void chat(std::string message);
-	//void Lua_DoString(std::string cmd);
+	void ResetGame();
 
 private:
 

@@ -2,6 +2,9 @@
 #include "MemoryReader.h"
 #include <iostream>
 
+//#include <tchar.h>
+//#include <tlhelp32.h>
+
 #define PROG_STRING "World of warcraft"
 
 MemoryReader::MemoryReader() {
@@ -9,22 +12,24 @@ MemoryReader::MemoryReader() {
 }
 
 void MemoryReader::InitReader() {
+
+	int sleep = 3000;
 	hwnd = FindWindowA(NULL, PROG_STRING);
 
 	if (hwnd == 0) {
 
 		std::cout << "Couldn't find the process" << std::endl;
-		Sleep(3000);
+		Sleep(sleep);
 		exit(-1);
 	}
 
 	else {
-		GetWindowThreadProcessId(hwnd, &procID);
+		hThread = GetWindowThreadProcessId(hwnd, &procID);
 		handle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, procID);
 
 		if (procID == 0) {
 			std::cout << "Couldn't find the process id" << std::endl;
-			Sleep(3000);
+			Sleep(sleep);
 			exit(-1);
 		}
 	}
@@ -97,3 +102,28 @@ byte MemoryReader::ReadByte(intptr_t pointer) {
 
 	return value;
 }
+
+/*
+DWORD MemoryReader::dwGetModuleBaseAddress(DWORD dwProcessIdentifier, TCHAR *lpszModuleName)
+{
+	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, dwProcessIdentifier);
+	DWORD dwModuleBaseAddress = 0;
+	if (hSnapshot != INVALID_HANDLE_VALUE)
+	{
+		MODULEENTRY32 ModuleEntry32 = { 0 };
+		ModuleEntry32.dwSize = sizeof(MODULEENTRY32);
+		if (Module32First(hSnapshot, &ModuleEntry32))
+		{
+			do
+			{
+				if (_tcscmp(ModuleEntry32.szModule, lpszModuleName) == 0)
+				{
+					dwModuleBaseAddress = (DWORD)ModuleEntry32.modBaseAddr;
+					break;
+				}
+			} while (Module32Next(hSnapshot, &ModuleEntry32));
+		}
+		CloseHandle(hSnapshot);
+	}
+	return dwModuleBaseAddress;
+}*/

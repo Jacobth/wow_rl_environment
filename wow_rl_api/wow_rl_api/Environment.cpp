@@ -18,14 +18,7 @@ Environment::Environment(std::string zone)
 	grid = zones.GetGrid(zone);
 }
 
-float Environment::GetRemainingHp(float hp) {
-
-	return ((float)memory.GetHp() / hp);
-}
-
 float* Environment::Step(int action) {
-
-	//std::cout << "new step" << std::endl;
 
 	Grid::Square current_square = grid->GetSquare();
 
@@ -39,8 +32,7 @@ float* Environment::Step(int action) {
 
 	if (std::find(terminal_states.begin(), terminal_states.end(), next_state) != terminal_states.end()) {
 		done = true;
-		reward = 100000;
-		//std::cout << "terminal state" << std::endl;
+		reward = 1000000;
 	}
 
 	else if (next_state != -1) {
@@ -54,7 +46,6 @@ float* Environment::Step(int action) {
 
 		if (stuck)
 		{
-			//std::cout << "missed next state" << std::endl;
 			reward = -1000000;
 			memory.Stop();
 
@@ -64,8 +55,9 @@ float* Environment::Step(int action) {
 
 	//We reached the end of the grid
 	else {
-		reward = -100;
+		reward = -1000;
 		next_state = current_state;
+		//done = true;
 	}
 
 	float remaining_hp = memory.IsDead() ? 0 : GetRemainingHp(memory.GetMaxHp());
@@ -89,21 +81,24 @@ int Environment::Reset() {
 
 	memory.Stop();
 
-	//std::this_thread::sleep_for(std::chrono::milliseconds(300));
-
 	float x = grid->init_states[0];
 	float y = grid->init_states[1];
 	float z = grid->init_states[2];
 
 	memory.SetPos(x, y, z);
 
-	//std::this_thread::sleep_for(std::chrono::milliseconds(300));
-
 	int init = grid->GetInitState();
 
 	grid->SetGridIndex(init);
 
+	memory.ResetGame();
+
 	return init;
+}
+
+float Environment::GetRemainingHp(float hp) {
+
+	return ((float)memory.GetHp() / hp);
 }
 
 int Environment::GetCloseState() {

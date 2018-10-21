@@ -10,11 +10,7 @@
 
 #define EPSILON 0.5
 #define DELAY 100
-
-/*These are the offsets for the World of Warcraft client in version
-*3.3.5, build 12340
-*These offsets are always the same when the program launch.
-*/
+#define VK_KEY_1 0x31
 
 enum ObjectOffsets : int
 {
@@ -62,13 +58,14 @@ enum NameOffsets : long
 	playerMask = 0x10,
 };
 
-enum Movements
+enum Movements : int
 {
 	CtmABase = 0xCA11D8,
 	CtmAction = CtmABase + 0x1C,
 	FaceNorth = 0x2,
 	MoveForwardStart = 0x4,
-	MoveForwardStop = 13,
+	MoveForwardStop = 0x3,
+	MoveReset = 13,
 	CtmX = CtmABase + 0x90,
 	CtmY = CtmABase + 0x8C,
 	CtmZ = CtmABase + 0x94,
@@ -80,9 +77,10 @@ enum Movements
 	InitFloat = CtmABase + 0x8
 };
 
-const float PI = atan(1) * 4;
+//const float PI = atan(1) * 4;
 
-MemoryAction::MemoryAction() {
+MemoryAction::MemoryAction()
+{
 	LoadFromMemory();
 }
 
@@ -123,8 +121,8 @@ void MemoryAction::SetPos(float x, float y, float z)
 	mem.WriteFloat((intptr_t)(playerBase + ObjectOffsets::Pos_Z), z);
 }
 
-float MemoryAction::GetDistance(float x, float y) {
-
+float MemoryAction::GetDistance(float x, float y)
+{
 	float a = GetX() - x;
 	float b = GetY() - y;
 
@@ -133,8 +131,8 @@ float MemoryAction::GetDistance(float x, float y) {
 	return distance;
 }
 
-void MemoryAction::StartMoving(float x, float y, float z) {
-
+void MemoryAction::StartMoving(float x, float y, float z)
+{
 	const float init_float = 0.25;
 	const float distance = 0.2f;
 	const byte init_value_1 = 102;
@@ -156,8 +154,8 @@ void MemoryAction::StartMoving(float x, float y, float z) {
 	mem.WriteFloat((intptr_t)(Movements::CtmDistance), distance);
 }
 
-bool MemoryAction::MoveToPoint(float x, float y, float z) {
-
+bool MemoryAction::MoveToPoint(float x, float y, float z)
+{
 	const double max_time = 6000;
 
 	StartMoving(x, y, z);
@@ -174,13 +172,11 @@ bool MemoryAction::MoveToPoint(float x, float y, float z) {
 		}
 	}
 
-	//std::cout << GetDistance(x, y) << std::endl;
-
 	return GetDistance(x, y) > EPSILON;
 }
 
-bool MemoryAction::IsMoving() {
-
+bool MemoryAction::IsMoving()
+{
 	int action = mem.ReadInt((intptr_t)(Movements::CtmAction));
 
 	return action == Movements::MoveForwardStart;
@@ -191,42 +187,17 @@ void MemoryAction::SetAngle(float angle)
 	mem.WriteFloat((intptr_t)(playerBase + ObjectOffsets::Rot), angle);
 }
 
-void MemoryAction::Stop() {
-	if (IsMoving())
-		mem.WriteInt((intptr_t)(Movements::CtmAction), Movements::MoveForwardStop);
+void MemoryAction::Stop()
+{
+	mem.WriteInt((intptr_t)(Movements::CtmAction), Movements::MoveForwardStop);
+	Sleep(300);
 }
 
-void MemoryAction::MoveForward() {
+void MemoryAction::MoveForward()
+{
 	mem.WriteInt((intptr_t)(Movements::CtmAction), Movements::MoveForwardStart);
 }
-/*
-void MemoryAction::MoveBackwards() {
 
-	FLOAT new_angle = GetAngle() - PI;
-
-	SetAngle(new_angle);
-
-	MoveForward();
-}
-
-void MemoryAction::MoveLeft() {
-
-	FLOAT new_angle = GetAngle() + (PI / 2);
-
-	SetAngle(new_angle);
-
-	MoveForward();
-}
-
-void MemoryAction::MoveRight() {
-
-	FLOAT new_angle = GetAngle() - (PI / 2);
-
-	SetAngle(new_angle);
-
-	MoveForward();
-}
-*/
 float MemoryAction::GetAngle()
 {
 	float angle = mem.ReadFloat((intptr_t)(playerBase + ObjectOffsets::Rot));
@@ -317,151 +288,20 @@ float MemoryAction::GetSpeed()
 	return speed;
 }
 
-void MemoryAction::TurnOffAFK() {
-
+void MemoryAction::TurnOffAFK()
+{
 	int time = 20000000;
 
 	mem.WriteInt((intptr_t)ObjectOffsets::Tick_Count, time);
 }
 
-bool MemoryAction::IsDead() {
-
-	float dead_x = -119;
-	float dead_y = -8921;
-
-	return GetDistance(dead_x, dead_y) < 5;
-}
-/*
-typedef struct {
-	DWORD funcptr;
-	char command[255];
-} INJDATA;
-
-__declspec(naked) DWORD codeasm() {
-	__asm {
-		nop
-		push ebx //here we have address of funcptr, but I want the address of command on EAX so...
-		pop eax // remove from stack and pass it to EAX
-		add eax, 4 // add 4 to the address, therefore, now we have the address of char command[255]
-		push 0
-		push eax
-		push eax
-		mov edx, [ebx] //grab the content of EBX which is funcptr and pass to EDX
-		call edx // call Lua_doString()
-		add esp, 0xC //probably just "fixing" the stack pointer
-		nop
-		ret
-	};
-	//return 0;
-}
-
-static void after_codeasm(void) {
-}
-
-void convertToASCII(std::string letter, char x[255])
+bool MemoryAction::IsDead()
 {
-	for (int j = 0; j <= 255; j++) {
-		x[j] = 0x0;
-	}
-	for (int i = 0; i < letter.size(); i++)
-	{
-		x[i] = letter.at(i);
-	}
+	return GetHp() == 0;
 }
 
-void MemoryAction::Lua_DoString(std::string cmd) {
-
-	HINSTANCE mod = LoadLibrary(L"user32.dll");
-
-	DWORD Framescript_ExecuteBuffer = 0x00819210;
-	DWORD func = reinterpret_cast<unsigned int>(mod) + Framescript_ExecuteBuffer;
-
-	DWORD cbCodeSize = ((PBYTE)after_codeasm - (PBYTE)codeasm);
-
-	cbCodeSize = 200;
-
-	INJDATA mydata;
-	convertToASCII(cmd, mydata.command);
-	mydata.funcptr = func;
-
-	LPVOID pData = VirtualAllocEx(mem.handle, NULL, sizeof(func), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-	LPVOID pLibRemote = VirtualAllocEx(mem.handle, NULL, cbCodeSize, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-
-	WriteProcessMemory(mem.handle, pData, &mydata, sizeof(mydata), NULL);
-	WriteProcessMemory(mem.handle, pLibRemote, &codeasm, cbCodeSize, NULL);
-
-	HANDLE hThread = CreateRemoteThread(mem.handle, NULL, 0, (LPTHREAD_START_ROUTINE)pLibRemote, pData, 0, NULL);
-
-	if (hThread != 0) {
-		WaitForSingleObject(hThread, INFINITE);
-		CloseHandle(hThread);
-		VirtualFreeEx(mem.handle, pLibRemote, cbCodeSize, MEM_RELEASE);
-		VirtualFreeEx(mem.handle, pData, sizeof(func), MEM_RELEASE);
-	}
-}
-*/
-
-/*
-bool MemoryAction::Move(int action, float x, float y) {
-
-MemoryAction::PointNorth();
-
-std::this_thread::sleep_for(std::chrono::milliseconds(DELAY));
-
-switch (action)
+void MemoryAction::ResetGame()
 {
-case 0:
-MoveForward();
-break;
-
-case 1:
-MoveBackwards();
-break;
-
-case 2:
-MoveLeft();
-break;
-
-case 3:
-MoveRight();
-break;
-
-default:
-break;
+	PostMessage(mem.hwnd, WM_KEYDOWN, VK_KEY_1, 0);
+	PostMessage(mem.hwnd, WM_KEYUP, VK_KEY_1, 0);
 }
-
-float inf = std::numeric_limits<float>::infinity();
-
-float prev_distance = inf;
-float current_distance = 0;
-bool stuck = false;
-
-int sleep = 40;
-
-std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-
-while ((current_distance = GetDistance(x, y)) > EPSILON) {
-
-std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-
-// If this is true we missed the next step
-if (current_distance >= prev_distance) {
-
-std::cout << "missed next state" << std::endl;
-stuck = true;
-
-break;
-}
-
-prev_distance = current_distance;
-}
-
-Stop();
-
-std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-
-PointNorth();
-
-return stuck;
-}
-*/

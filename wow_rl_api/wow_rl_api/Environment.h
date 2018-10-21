@@ -12,7 +12,6 @@ public:
 	int GetCloseState();
 
 private:
-
 	float GetRemainingHp(float hp);
 };
 
