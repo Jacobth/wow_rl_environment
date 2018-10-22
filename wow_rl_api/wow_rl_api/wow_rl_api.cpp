@@ -6,10 +6,13 @@
 #include <thread>
 #include <random>
 #include <iostream>
+#include "Zones.h"
+#include "Grid.h"
 
 void test(Environment env);
 void printState(Environment env, MemoryAction mem);
 void testPos(Environment env, MemoryAction mem);
+void testAvg(MemoryAction mem);
 
 int main()
 {
@@ -24,24 +27,35 @@ int main()
 	//env.Reset();
 	//mem.Chat("h");
 	//mem.checkTime();
-	
-
-	std::cout << env.t_x << std::endl;
-	std::cout << env.t_y << std::endl;
-
-	Sleep(7000);
 
 	//env.Reset();
 	//test(env);
 
-	//printState(env, mem);
+	//testAvg(mem);
+
+	printState(env, mem);
 
 	return 0;
 }
 
+void testAvg(MemoryAction mem) {
+
+	Zones zones;
+	Grid* grid = zones.GetGrid("elwynn");
+
+	while (true) {
+
+		std::cout << grid->GetAveragePoint().y << std::endl;
+
+		Sleep(500);
+
+	}
+
+}
+
 void test(Environment env) {
 
-	int y = env.Reset();
+	int y = env.Reset()[0];
 
 	std::cout << y << std::endl;
 
@@ -52,7 +66,12 @@ void test(Environment env) {
 		std::uniform_int_distribution<int> uni(0, 3);
 
 		int action = uni(rng);
-		float* arr = env.Step(0);
+		float done = env.Step(action)[3];
+
+		std::cout << done << std::endl;
+
+		if (done == 1)
+			env.Reset();
 
 		//float arr2[4];
 
@@ -62,10 +81,6 @@ void test(Environment env) {
 
 		//std::cout << (float)(*(arr + 2)) << std::endl;
 
-		if (*(arr + 3) == 1) {
-			int x = env.Reset();
-			std::cout << x << std::endl;
-		}
 	}
 }
 

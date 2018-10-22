@@ -27,7 +27,33 @@ public:
 
 	};
 
-	std::vector<int> terminal_state;
+	class Point {
+	public:
+		float x;
+		float y;
+		float z;
+
+		Point() {
+
+		}
+
+		Point(float x, float y) {
+			this->x = x;
+			this->y = y;
+		}
+
+		Point(float x, float y, float z) {
+			this->x = x;
+			this->y = y;
+			this->z = z;
+		}
+
+	};
+
+	Point terminal_start;
+	Point terminal_end;
+	Point init;
+
 	int init_state;
 
 	float start_x;
@@ -36,9 +62,7 @@ public:
 	int size_x;
 	int size_y;
 
-	std::vector<float> init_states;
-
-	Grid(std::vector<int> terminal_state, int init_state, float start_x, float start_y, int size_x, int size_y, std::vector<float> init_states);
+	Grid(Point terminal_start, Point terminal_end, int init_state, float start_x, float start_y, int size_x, int size_y, Point init);
 
 	std::vector<std::vector<Grid::Square>> CreateGrid();
 
@@ -49,9 +73,13 @@ public:
 	void SetGridIndex(int state);
 	void UpdateGridIndex(int action);
 
+	bool IsTerminal(float player_x, float player_y);
+
 	Grid::Square GetSquare();
 	Grid::Square GetSquare(int i, int j);
 	Grid::Square GetSquare(int state);
+
+	Grid::Point GetAveragePoint();
 
 private:
 

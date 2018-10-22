@@ -12,6 +12,7 @@
 #define TERMINATE_REWARD 1000
 #define STEP_REWARD -0.1
 #define STUCK_REWARD -1000
+#define STATE_SIZE 3
 
 Grid* grid;
 MemoryAction memory;
@@ -24,12 +25,11 @@ Environment::Environment(std::string zone)
 	Zones zones;
 	grid = zones.GetGrid(zone);
 
-	int t_state = grid->terminal_state[0];
+	
+	Grid::Point avg_point = grid->GetAveragePoint();
 
-	Grid::Square s = grid->GetSquare(t_state);
-
-	t_x = s.pos_x;
-	t_y = s.pos_y;
+	t_x = avg_point.x;
+	t_y = avg_point.y;
 }
 
 float Environment::StepReward(float dist)
@@ -49,9 +49,7 @@ float* Environment::Step(int action)
 	bool done = false;
 	bool stuck = false;
 
-	std::vector<int> terminal_states = grid->terminal_state;
-
-	if (std::find(terminal_states.begin(), terminal_states.end(), next_state) != terminal_states.end()) {
+	if (grid->IsTerminal(memory.GetX(), memory.GetY())) {
 		done = true;
 		reward = TERMINATE_REWARD;
 	}
@@ -83,32 +81,32 @@ float* Environment::Step(int action)
 		//done = true;
 	}
 
-	float remaining_hp = memory.IsDead() ? 0 : GetRemainingHp(memory.GetMaxHp());
+	float remaining_hp = memory.IsDead() ? 0 : this->GetRemainingHp(memory.GetMaxHp());
 	reward += ((1 - remaining_hp) * STUCK_REWARD);
 
 	float done_val = done ? 1.0 : 0.0;
+	float dist_s = memory.GetDistance(t_x, t_y);
 
-	float* vals = new float[4];
+	float* vals = new float[5];
 
 	vals[0] = (float)next_state;
 	vals[1] = remaining_hp;
-	vals[2] = reward;
-	vals[3] = done_val;
+	vals[2] = dist_s;
+	vals[3] = reward;
+	vals[4] = done_val;
 
 	delete vals;
 
 	return vals;
 }
 
-int Environment::Reset()
+float* Environment::Reset()
 {
 	memory.Stop();
 
-	float x = grid->init_states[0];
-	float y = grid->init_states[1];
-	float z = grid->init_states[2];
+	Grid::Point intit_point = grid->init;
 
-	memory.SetPos(x, y, z);
+	memory.SetPos(intit_point.x, intit_point.y, intit_point.z);
 
 	int init = grid->GetInitState();
 
@@ -116,7 +114,15 @@ int Environment::Reset()
 
 	memory.ResetGame();
 
-	return init;
+	float* vals = new float[3];
+
+	vals[0] = (float)init;
+	vals[1] = 1.0;
+	vals[2] = memory.GetDistance(t_x, t_y);
+
+	delete vals;
+
+	return vals;
 }
 
 int Environment::GetActionSize()
@@ -126,7 +132,7 @@ int Environment::GetActionSize()
 
 int Environment::GetStateSize()
 {
-	return 2;
+	return STATE_SIZE;
 }
 
 float Environment::GetRemainingHp(float hp)
@@ -174,10 +180,8 @@ extern "C" {
 
 	Environment* Env_new() { return new Environment("elwynn"); }
 
-	int Reset(Environment* env) { return env->Reset(); }
+	float* Reset(Environment* env) { return env->Reset(); }
 	float* Step(Environment* env, int action) { return env->Step(action); }
 	int GetStateSize(Environment* env) { return env->GetStateSize(); }
 	int GetActionSize(Environment* env) { return env->GetActionSize(); }
-
-	//const char* GetS(Foo* foo) { return foo->getS(); }
 }

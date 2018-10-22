@@ -8,7 +8,7 @@ public:
 	Environment(std::string zone);
 
 	float* Step(int action);
-	int Reset();
+	float* Reset();
 	int GetCloseState();
 
 	int GetStateSize();

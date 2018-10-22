@@ -6,15 +6,16 @@
 #define LEFT_ACTION 2
 #define RIGHT_ACTION 3
 
-Grid::Grid(std::vector<int> terminal_state, int init_state, float start_x, float start_y, int size_x, int size_y, std::vector<float> init_states)
+Grid::Grid(Point terminal_start, Point terminal_end, int init_state, float start_x, float start_y, int size_x, int size_y, Point init)
 {
-	this->terminal_state = terminal_state;
+	this->terminal_start = terminal_start;
+	this->terminal_end = terminal_end;
 	this->init_state = init_state;
 	this->start_x = start_x;
 	this->start_y = start_y;
 	this->size_x = size_x;
 	this->size_y = size_y;
-	this->init_states = init_states;
+	this->init = init;
 
 	matrix = CreateGrid();
 }
@@ -123,4 +124,20 @@ Grid::Square Grid::GetSquare(int state) {
 	}
 
 	return Square();
+}
+
+bool Grid::IsTerminal(float player_x, float player_y)
+{
+	bool within_x = (player_x >= terminal_start.x) && (player_x <= terminal_end.x);
+	bool within_y = (player_y >= terminal_start.y) && (player_y <= terminal_end.y);
+
+	return within_x && within_y;
+}
+
+Grid::Point Grid::GetAveragePoint()
+{
+	float avg_x = (this->terminal_start.x + this->terminal_end.x) / 2;
+	float avg_y = (this->terminal_start.y + this->terminal_end.y) / 2;
+
+	return Point(avg_x, avg_y);
 }
