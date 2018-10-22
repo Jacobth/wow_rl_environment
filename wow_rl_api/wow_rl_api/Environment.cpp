@@ -9,9 +9,9 @@
 #include <limits>
 #include <iostream>
 
-#define TERMINATE_REWARD 1000
-#define STEP_REWARD -0.1
-#define STUCK_REWARD -1000
+#define TERMINATE_REWARD 100
+#define STEP_REWARD -0.01
+#define STUCK_REWARD -100
 #define STATE_SIZE 3
 
 Grid* grid;
@@ -25,9 +25,7 @@ Environment::Environment(std::string zone)
 	Zones zones;
 	grid = zones.GetGrid(zone);
 
-	
 	Grid::Point avg_point = grid->GetAveragePoint();
-
 	t_x = avg_point.x;
 	t_y = avg_point.y;
 }
@@ -62,23 +60,21 @@ float* Environment::Step(int action)
 		stuck = memory.MoveToPoint(new_square.pos_x, new_square.pos_y, memory.GetZ());
 
 		float dist = memory.GetDistance(t_x, t_y);
-
 		reward = StepReward(dist);
 
 		if (stuck)
 		{
-			reward = STUCK_REWARD - (dist * 10);
+			reward = STUCK_REWARD - (dist * dist * 10);
 			memory.Stop();
 
 			done = true;
 		}
 	}
 
-	//We reached the end of the grid
-	else {
+	else
+	{
 		reward = STUCK_REWARD;
 		next_state = current_state;
-		//done = true;
 	}
 
 	float remaining_hp = memory.IsDead() ? 0 : this->GetRemainingHp(memory.GetMaxHp());
