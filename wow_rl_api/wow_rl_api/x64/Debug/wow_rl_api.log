@@ -1,9 +1,4 @@
 ﻿  wow_rl_api.cpp
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\wow_rl_api.cpp(87): warning C4305: 'argument': truncation from 'double' to 'float'
-  MemoryAction.cpp
-  Environment.cpp
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\environment.cpp(67): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\environment.cpp(70): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
+c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\wow_rl_api.cpp(92): warning C4305: 'argument': truncation from 'double' to 'float'
   wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\x64\Debug\wow_rl_api.exe
   wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\x64\Debug\wow_rl_api.pdb (Partial PDB)

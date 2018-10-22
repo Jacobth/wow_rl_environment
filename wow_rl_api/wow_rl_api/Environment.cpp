@@ -9,17 +9,38 @@
 #include <limits>
 #include <iostream>
 
+#define TERMINATE_REWARD 1000
+#define STEP_REWARD -0.1
+#define STUCK_REWARD -1000
+
 Grid* grid;
 MemoryAction memory;
+
+float t_x;
+float t_y;
 
 Environment::Environment(std::string zone)
 {
 	Zones zones;
 	grid = zones.GetGrid(zone);
+
+	int t_state = grid->terminal_state[0];
+
+	Grid::Square s = grid->GetSquare(t_state);
+
+	t_x = s.pos_x;
+	t_y = s.pos_y;
 }
 
-float* Environment::Step(int action) {
+float Environment::StepReward(float dist)
+{
+	float distance = dist / 100;
 
+	return STEP_REWARD * distance;
+}
+
+float* Environment::Step(int action)
+{
 	Grid::Square current_square = grid->GetSquare();
 
 	int current_state = current_square.state;
@@ -32,7 +53,7 @@ float* Environment::Step(int action) {
 
 	if (std::find(terminal_states.begin(), terminal_states.end(), next_state) != terminal_states.end()) {
 		done = true;
-		reward = 1000000;
+		reward = TERMINATE_REWARD;
 	}
 
 	else if (next_state != -1) {
@@ -42,11 +63,13 @@ float* Environment::Step(int action) {
 
 		stuck = memory.MoveToPoint(new_square.pos_x, new_square.pos_y, memory.GetZ());
 
-		reward = -1.0;
+		float dist = memory.GetDistance(t_x, t_y);
+
+		reward = StepReward(dist);
 
 		if (stuck)
 		{
-			reward = -1000000;
+			reward = STUCK_REWARD - (dist * 10);
 			memory.Stop();
 
 			done = true;
@@ -55,13 +78,13 @@ float* Environment::Step(int action) {
 
 	//We reached the end of the grid
 	else {
-		reward = -1000;
+		reward = STUCK_REWARD;
 		next_state = current_state;
 		//done = true;
 	}
 
 	float remaining_hp = memory.IsDead() ? 0 : GetRemainingHp(memory.GetMaxHp());
-	reward += ((1 - remaining_hp) * -10000);
+	reward += ((1 - remaining_hp) * STUCK_REWARD);
 
 	float done_val = done ? 1.0 : 0.0;
 
@@ -77,8 +100,8 @@ float* Environment::Step(int action) {
 	return vals;
 }
 
-int Environment::Reset() {
-
+int Environment::Reset()
+{
 	memory.Stop();
 
 	float x = grid->init_states[0];
@@ -96,13 +119,23 @@ int Environment::Reset() {
 	return init;
 }
 
-float Environment::GetRemainingHp(float hp) {
+int Environment::GetActionSize()
+{
+	return sizeof(grid->GetSquare().neighbours[0]);
+}
 
+int Environment::GetStateSize()
+{
+	return 2;
+}
+
+float Environment::GetRemainingHp(float hp)
+{
 	return ((float)memory.GetHp() / hp);
 }
 
-int Environment::GetCloseState() {
-
+int Environment::GetCloseState()
+{
 	MemoryAction mem;
 
 	float min_distance = std::numeric_limits<float>::infinity();
@@ -143,6 +176,8 @@ extern "C" {
 
 	int Reset(Environment* env) { return env->Reset(); }
 	float* Step(Environment* env, int action) { return env->Step(action); }
+	int GetStateSize(Environment* env) { return env->GetStateSize(); }
+	int GetActionSize(Environment* env) { return env->GetActionSize(); }
 
 	//const char* GetS(Foo* foo) { return foo->getS(); }
 }

@@ -11,7 +11,11 @@ public:
 	int Reset();
 	int GetCloseState();
 
+	int GetStateSize();
+	int GetActionSize();
+
 private:
 	float GetRemainingHp(float hp);
+	float StepReward(float dist);
 };
 

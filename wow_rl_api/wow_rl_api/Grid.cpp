@@ -109,3 +109,18 @@ Grid::Square Grid::GetSquare() {
 Grid::Square Grid::GetSquare(int i, int j) {
 	return matrix[i][j];
 }
+
+Grid::Square Grid::GetSquare(int state) {
+
+	for (int i = 0; i < sizeof(matrix); i++) {
+		for (int j = 0; j < sizeof(matrix[0]); j++) {
+
+			Square s = matrix[i][j];
+
+			if (state == s.state)
+				return s;
+		}
+	}
+
+	return Square();
+}

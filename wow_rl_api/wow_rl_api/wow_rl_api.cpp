@@ -24,7 +24,12 @@ int main()
 	//env.Reset();
 	//mem.Chat("h");
 	//mem.checkTime();
-	testPos(env, mem);
+	
+
+	std::cout << env.t_x << std::endl;
+	std::cout << env.t_y << std::endl;
+
+	Sleep(7000);
 
 	//env.Reset();
 	//test(env);

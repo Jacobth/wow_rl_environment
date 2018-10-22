@@ -51,6 +51,7 @@ public:
 
 	Grid::Square GetSquare();
 	Grid::Square GetSquare(int i, int j);
+	Grid::Square GetSquare(int state);
 
 private:
 
