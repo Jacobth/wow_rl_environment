@@ -1,0 +1,1 @@
+g++ -c EnvSimulator.cpp && g++ -c Zones.cpp && g++ -c Grid.cpp && g++ -shared -Wl,-soname,libenvs.so -o libenvs.so  Grid.o EnvSimulator.o  Zones.o && copy libenvs.so C:\Users\conta\Documents\GitHub\wow_rl_network

@@ -1,7 +1,47 @@
-﻿  MemoryAction.cpp
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(83): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(83): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\memoryaction.cpp(366): warning C4018: '<': signed/unsigned mismatch
+﻿  stdafx.cpp
+  Zones.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\zones.cpp(8): warning C4305: 'argument': truncation from 'double' to 'float'
+  wow_rl_api.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\wow_rl_api.cpp(110): warning C4305: 'argument': truncation from 'double' to 'float'
+  MemoryTest.cpp
+  MemoryReader.cpp
+  MemoryAction.cpp
+  Grid.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(132): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(133): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(136): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(140): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(141): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(148): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(149): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(152): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(153): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(156): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(157): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(160): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(161): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(164): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(165): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(168): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(169): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(172): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(173): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(176): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(177): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(180): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(181): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(184): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\grid.cpp(185): warning C4305: 'argument': truncation from 'double' to 'float'
+  EnvSimulator.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\envsimulator.cpp(95): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\envsimulator.cpp(150): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  Environment.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\environment.cpp(38): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\environment.cpp(93): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\environment.cpp(96): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
 Environment.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
-  wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.exe
-  wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\Debug\wow_rl_api.pdb (Partial PDB)
+EnvSimulator.obj : error LNK2005: _Env_new already defined in Environment.obj
+EnvSimulator.obj : error LNK2005: _Reset already defined in Environment.obj
+EnvSimulator.obj : error LNK2005: _Step already defined in Environment.obj
+C:\Users\conta\Documents\GitHub\wow_rl_environment\wow_rl_api\Debug\wow_rl_api.exe : fatal error LNK1169: one or more multiply defined symbols found

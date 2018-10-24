@@ -71,6 +71,11 @@ public:
 	void UpdateGridIndex(int action);
 
 	bool IsTerminal(float player_x, float player_y);
+	bool IsStuck(float player_x, float player_y);
+
+	std::vector<std::vector<Grid::Point>> InitObjects();
+
+	std::vector<std::vector<Grid::Point>> objects;
 
 	Grid::Square GetSquare();
 	Grid::Square GetSquare(int i, int j);

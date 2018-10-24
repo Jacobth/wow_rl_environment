@@ -6,8 +6,6 @@
 #include <thread>
 #include <random>
 #include <iostream>
-#include "Zones.h"
-#include "Grid.h"
 
 void test(Environment env);
 void printState(Environment env, MemoryAction mem);

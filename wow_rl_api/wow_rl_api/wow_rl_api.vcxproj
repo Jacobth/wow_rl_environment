@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h" />
+    <ClInclude Include="EnvSimulator.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="MemoryAction.h" />
     <ClInclude Include="MemoryReader.h" />
@@ -149,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="EnvSimulator.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="MemoryAction.cpp" />
     <ClCompile Include="MemoryReader.cpp" />

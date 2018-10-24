@@ -9,6 +9,7 @@
 #include <limits>
 #include <iostream>
 
+
 #define TERMINATE_REWARD 100
 #define STEP_REWARD -0.01
 #define STUCK_REWARD -100
