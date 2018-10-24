@@ -12,7 +12,7 @@
 void test(Environment env);
 void printState(Environment env, MemoryAction mem);
 void testPos(Environment env, MemoryAction mem);
-void testAvg(MemoryAction mem);
+void testAvg(MemoryAction mem, Environment env);
 
 int main()
 {
@@ -31,21 +31,24 @@ int main()
 	//env.Reset();
 	//test(env);
 
-	//testAvg(mem);
+	//mem.SetAngle(0);
 
-	printState(env, mem);
+	//env.Step(3);
+
+	//testAvg(mem, env);
+
+	//mem.SetPos(135, -9375, 65);
+
+	//printState(env, mem);
 
 	return 0;
 }
 
-void testAvg(MemoryAction mem) {
-
-	Zones zones;
-	Grid* grid = zones.GetGrid("elwynn");
+void testAvg(MemoryAction mem, Environment env) {
 
 	while (true) {
 
-		std::cout << grid->GetAveragePoint().y << std::endl;
+	//	std::cout << mem.GetDistance(env.t_x, env.t_y) << std::endl;
 
 		Sleep(500);
 
@@ -55,7 +58,7 @@ void testAvg(MemoryAction mem) {
 
 void test(Environment env) {
 
-	int y = env.Reset()[0];
+	float y = env.Reset()[0];
 
 	std::cout << y << std::endl;
 
@@ -66,7 +69,9 @@ void test(Environment env) {
 		std::uniform_int_distribution<int> uni(0, 3);
 
 		int action = uni(rng);
-		float done = env.Step(action)[3];
+		float done = env.Step(1)[3];
+
+		Sleep(100);
 
 		std::cout << done << std::endl;
 

@@ -6,13 +6,12 @@
 #define LEFT_ACTION 2
 #define RIGHT_ACTION 3
 
-Grid::Grid(Point terminal_start, Point terminal_end, int init_state, float start_x, float start_y, int size_x, int size_y, Point init)
+Grid::Grid(Point terminal_start, Point terminal_end, Point init, int init_state, int size_x, int size_y)
 {
 	this->terminal_start = terminal_start;
 	this->terminal_end = terminal_end;
 	this->init_state = init_state;
-	this->start_x = start_x;
-	this->start_y = start_y;
+	this->init = init;
 	this->size_x = size_x;
 	this->size_y = size_y;
 	this->init = init;
@@ -23,27 +22,29 @@ Grid::Grid(Point terminal_start, Point terminal_end, int init_state, float start
 int current_x = 0;
 int current_y = 0;
 
+int init_x = 0;
+int init_y = 0;
+
 std::vector<std::vector<Grid::Square>> Grid::CreateGrid()
 {
 	std::vector<std::vector<Square>> matrix(size_y, std::vector<Square>(size_x));
 
 	int state = 0;
-	float x = start_x;
-	float y = start_y;
+	float x = init.x;
+	float y = init.y;
 
 	for (int i = 0; i < size_y; i++) {
 
-		x = start_x;
+		x = init.x;
 
 		for (int j = 0; j < size_x; j++) {
 
 			int up = i == 0 ? -1 : state - size_x;
-			int down = i == size_x - 1 ? -1 : state + size_x;
+			int down = i == size_y - 1 ? -1 : state + size_x;
 			int left = j == 0 ? -1 : state - 1;
 			int right = j == size_x - 1 ? -1 : state + 1;
 
-			int neighbours[] = { up, down, left, right };
-			std::vector<int> neighbours_v(neighbours, neighbours + sizeof(neighbours) / sizeof(neighbours[0]));
+			std::vector<int> neighbours_v = { up, down, left, right };
 
 			matrix[i][j] = Square(state, neighbours_v, x, y);
 
@@ -52,6 +53,9 @@ std::vector<std::vector<Grid::Square>> Grid::CreateGrid()
 			if (state == init_state) {
 				current_y = i;
 				current_x = j;
+
+				init_x = current_x;
+				init_y = current_y;
 			}
 
 			state++;
@@ -62,20 +66,9 @@ std::vector<std::vector<Grid::Square>> Grid::CreateGrid()
 	return matrix;
 }
 
-void Grid::SetGridIndex(int state) {
-
-	for (int i = 0; i < size_y; i++) {
-		for (int j = 0; j < size_x; j++) {
-
-			int tmp_state = matrix[i][j].state;
-
-			if (state == tmp_state) {
-				current_y = i;
-				current_x = j;
-				return;
-			}
-		}
-	}
+void Grid::SetGridIndex() {
+	current_x = init_x;
+	current_y = init_y;
 }
 
 void Grid::UpdateGridIndex(int action) {

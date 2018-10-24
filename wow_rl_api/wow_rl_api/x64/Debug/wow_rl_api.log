@@ -1,5 +1,11 @@
 ﻿  wow_rl_api.cpp
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\wow_rl_api.cpp(58): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\conta\documents\visual studio 2017\projects\wow_rl_api\wow_rl_api\wow_rl_api.cpp(107): warning C4305: 'argument': truncation from 'double' to 'float'
-  wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\x64\Debug\wow_rl_api.exe
-  wow_rl_api.vcxproj -> C:\Users\conta\documents\visual studio 2017\Projects\wow_rl_api\x64\Debug\wow_rl_api.pdb (Partial PDB)
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\wow_rl_api.cpp(112): warning C4305: 'argument': truncation from 'double' to 'float'
+  Zones.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\zones.cpp(8): warning C4305: 'argument': truncation from 'double' to 'float'
+  Environment.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\environment.cpp(37): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\environment.cpp(92): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\environment.cpp(95): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+  wow_rl_api.vcxproj -> C:\Users\conta\Documents\GitHub\wow_rl_environment\wow_rl_api\x64\Debug\wow_rl_api.exe
+  wow_rl_api.vcxproj -> C:\Users\conta\Documents\GitHub\wow_rl_environment\wow_rl_api\x64\Debug\wow_rl_api.pdb (Partial PDB)

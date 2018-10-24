@@ -21,7 +21,6 @@ public:
 
 	void LoadFromMemory();
 	void SetAngle(float angle);
-	//bool Move(int action, float x, float y);
 	void SetPos(float x, float y, float z);
 	void SetX(float x);
 	void SetY(float y);
@@ -31,9 +30,6 @@ public:
 	void MoveToCorpse();
 	void Stop();
 	void MoveForward();
-//	void MoveBackwards();
-//	void MoveLeft();
-//	void MoveRight();
 	void PointNorth() {
 		SetAngle(0);
 	};

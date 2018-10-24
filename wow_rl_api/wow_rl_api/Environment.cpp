@@ -37,23 +37,34 @@ float Environment::StepReward(float dist)
 	return STEP_REWARD * distance;
 }
 
+void printNeighbours(Grid::Square current_square, int next_state)
+{
+	std::cout << "	" << current_square.neighbours[0] << std::endl;
+
+	std::cout << current_square.neighbours[2] << "	" << next_state << "	" << current_square.neighbours[3] << std::endl;
+
+	std::cout << "	" << current_square.neighbours[1] << '\n' << std::endl;
+}
+
 float* Environment::Step(int action)
 {
 	Grid::Square current_square = grid->GetSquare();
 
 	int current_state = current_square.state;
 	int next_state = current_square.neighbours[action];
+
 	float reward = 0.0;
 	bool done = false;
 	bool stuck = false;
 
-	if (grid->IsTerminal(memory.GetX(), memory.GetY())) {
+	if (grid->IsTerminal(memory.GetX(), memory.GetY())) 
+	{
 		done = true;
 		reward = TERMINATE_REWARD;
 	}
 
-	else if (next_state != -1) {
-
+	else if (next_state != -1) 
+	{
 		grid->UpdateGridIndex(action);
 		Grid::Square new_square = grid->GetSquare();
 
@@ -73,8 +84,9 @@ float* Environment::Step(int action)
 
 	else
 	{
-		reward = STUCK_REWARD;
+		reward = STUCK_REWARD * 100000;
 		next_state = current_state;
+		done = true;
 	}
 
 	float remaining_hp = memory.IsDead() ? 0 : this->GetRemainingHp(memory.GetMaxHp());
@@ -106,7 +118,7 @@ float* Environment::Reset()
 
 	int init = grid->GetInitState();
 
-	grid->SetGridIndex(init);
+	grid->SetGridIndex();
 
 	memory.ResetGame();
 

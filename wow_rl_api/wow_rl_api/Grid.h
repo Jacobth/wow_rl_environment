@@ -56,13 +56,10 @@ public:
 
 	int init_state;
 
-	float start_x;
-	float start_y;
-
 	int size_x;
 	int size_y;
 
-	Grid(Point terminal_start, Point terminal_end, int init_state, float start_x, float start_y, int size_x, int size_y, Point init);
+	Grid(Point terminal_start, Point terminal_end, Point init, int init_state, int size_x, int size_y);
 
 	std::vector<std::vector<Grid::Square>> CreateGrid();
 
@@ -70,7 +67,7 @@ public:
 		return init_state;
 	}
 
-	void SetGridIndex(int state);
+	void SetGridIndex();
 	void UpdateGridIndex(int action);
 
 	bool IsTerminal(float player_x, float player_y);

@@ -24,7 +24,7 @@ void MemoryReader::InitReader() {
 	}
 
 	else {
-		hThread = GetWindowThreadProcessId(hwnd, &procID);
+		GetWindowThreadProcessId(hwnd, &procID);
 		handle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, procID);
 
 		if (procID == 0) {
