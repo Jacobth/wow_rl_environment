@@ -58,13 +58,13 @@ float* Environment::Step(int action)
 	bool done = false;
 	bool stuck = false;
 
-	if (grid->IsTerminal(memory.GetX(), memory.GetY())) 
+	if (grid->IsTerminal(memory.GetX(), memory.GetY()))
 	{
 		done = true;
 		reward = TERMINATE_REWARD;
 	}
 
-	else if (next_state != -1) 
+	else if (next_state != -1)
 	{
 		grid->UpdateGridIndex(action);
 		Grid::Square new_square = grid->GetSquare();
@@ -78,7 +78,6 @@ float* Environment::Step(int action)
 		{
 			reward = STUCK_REWARD - (dist * dist * 10);
 			memory.Stop();
-
 			done = true;
 		}
 	}
@@ -94,15 +93,19 @@ float* Environment::Step(int action)
 	reward += ((1 - remaining_hp) * STUCK_REWARD);
 
 	float done_val = done ? 1.0 : 0.0;
-	float dist_s = memory.GetDistance(t_x, t_y);
 
-	float* vals = new float[5];
+	float* vals = new float[7];
 
-	vals[0] = (float)next_state;
-	vals[1] = remaining_hp;
-	vals[2] = dist_s;
-	vals[3] = reward;
-	vals[4] = done_val;
+	float player_x = memory.GetX();
+	float player_y = memory.GetY();
+
+	vals[0] = player_x;
+	vals[1] = player_y;
+	vals[2] = player_x - t_x;
+	vals[3] = player_y - t_y;
+	vals[4] = remaining_hp;
+	vals[5] = reward;
+	vals[6] = done_val;
 
 	delete vals;
 
@@ -123,11 +126,16 @@ float* Environment::Reset()
 
 	memory.ResetGame();
 
-	float* vals = new float[3];
+	float* vals = new float[5];
 
-	vals[0] = (float)init;
-	vals[1] = 1.0;
-	vals[2] = memory.GetDistance(t_x, t_y);
+	float player_x = memory.GetX();
+	float player_y = memory.GetY();
+
+	vals[0] = player_x;
+	vals[1] = player_y;
+	vals[2] = player_x - t_x;
+	vals[3] = player_y - t_y;
+	vals[4] = 1.0;
 
 	delete vals;
 
