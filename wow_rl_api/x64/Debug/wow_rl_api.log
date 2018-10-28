@@ -1,0 +1,14 @@
+﻿  stdafx.cpp
+  Main.cpp
+  Environment.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\environment.cpp(13): warning C4305: 'initializing': truncation from 'double' to 'float'
+  MemoryReader.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\memoryreader.cpp(43): warning C4244: 'return': conversion from 'intptr_t' to 'int', possible loss of data
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\memoryreader.cpp(58): warning C4244: 'return': conversion from 'intptr_t' to 'int', possible loss of data
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\memoryreader.cpp(66): warning C4244: 'return': conversion from 'DWORDLONG' to 'long', possible loss of data
+  MemoryAction.cpp
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\memoryaction.cpp(78): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\memoryaction.cpp(78): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+  Generating Code...
+  wow_rl_api.vcxproj -> C:\Users\conta\Documents\GitHub\wow_rl_environment\x64\Debug\wow_rl_api.exe
+  wow_rl_api.vcxproj -> C:\Users\conta\Documents\GitHub\wow_rl_environment\x64\Debug\wow_rl_api.pdb (Partial PDB)

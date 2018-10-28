@@ -1,5 +1,0 @@
-﻿  EnvSimulator.cpp
-c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\envsimulator.cpp(95): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\conta\documents\github\wow_rl_environment\wow_rl_api\wow_rl_api\envsimulator.cpp(150): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-  wow_rl_api.vcxproj -> C:\Users\conta\Documents\GitHub\wow_rl_environment\wow_rl_api\x64\Debug\wow_rl_api.exe
-  wow_rl_api.vcxproj -> C:\Users\conta\Documents\GitHub\wow_rl_environment\wow_rl_api\x64\Debug\wow_rl_api.pdb (Partial PDB)

@@ -1,0 +1,1 @@
+g++ -c Environment.cpp && g++ -c MemoryReader.cpp && g++ -c MemoryAction.cpp && g++ -shared -Wl,-soname,libenv.so -o libenv.so  Environment.o MemoryAction.o MemoryReader.o && copy libenv.so C:\Users\conta\Documents\GitHub\wow_sim_notebook\
